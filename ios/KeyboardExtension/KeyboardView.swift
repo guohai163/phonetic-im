@@ -21,6 +21,7 @@ final class KeyboardView: UIView {
 
     private enum Lang {
         case zh, ja, ko, en
+
         static func current() -> Lang {
             let code = Locale.preferredLanguages.first?.lowercased() ?? "en"
             if code.hasPrefix("zh") { return .zh }
@@ -28,6 +29,7 @@ final class KeyboardView: UIView {
             if code.hasPrefix("ko") { return .ko }
             return .en
         }
+
         var spaceTitle: String { self == .zh ? "空格" : "space" }
         var candidateTitle: String {
             switch self { case .zh: return "直输"; case .ja: return "直輸"; case .ko: return "직입"; case .en: return "Direct" }
@@ -40,6 +42,9 @@ final class KeyboardView: UIView {
         }
         var codeTitle: String {
             switch self { case .zh: return "输入码"; case .ja: return "入力コード"; case .ko: return "입력 코드"; case .en: return "Input Code" }
+        }
+        var emptyCodeHint: String {
+            switch self { case .zh: return "输入码"; case .ja: return "入力"; case .ko: return "입력"; case .en: return "code" }
         }
         func actionTitle(_ action: BottomAction) -> String {
             switch (self, action) {
@@ -72,6 +77,57 @@ final class KeyboardView: UIView {
         }
     }
 
+    private enum FunctionKeyStyle {
+        case standard
+        case white
+        case quick
+        case outline
+        case action
+    }
+
+    private final class BrandLogoView: UIView {
+        private let gradient = CAGradientLayer()
+        private let symbolLabel = UILabel()
+
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            translatesAutoresizingMaskIntoConstraints = false
+            layer.cornerRadius = 18
+            layer.masksToBounds = true
+
+            gradient.colors = [
+                KeyboardDesignTokens.Palette.brandBlue.cgColor,
+                KeyboardDesignTokens.Palette.brandBlueDeep.cgColor
+            ]
+            gradient.startPoint = CGPoint(x: 0.05, y: 0.0)
+            gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
+            layer.insertSublayer(gradient, at: 0)
+
+            symbolLabel.text = "æ"
+            symbolLabel.textAlignment = .center
+            symbolLabel.textColor = .white
+            symbolLabel.font = .systemFont(ofSize: 52, weight: .bold)
+            symbolLabel.adjustsFontSizeToFitWidth = true
+            symbolLabel.minimumScaleFactor = 0.65
+            symbolLabel.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(symbolLabel)
+
+            NSLayoutConstraint.activate([
+                symbolLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
+                symbolLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4),
+                symbolLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1)
+            ])
+        }
+
+        required init?(coder: NSCoder) { nil }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            gradient.frame = bounds
+            layer.cornerRadius = min(bounds.width, bounds.height) * 0.22
+        }
+    }
+
     private final class KeyboardKeyButton: UIControl {
         let key: KeyModel
         private let primary = UILabel()
@@ -84,25 +140,27 @@ final class KeyboardView: UIView {
             self.key = key
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
+            backgroundColor = isDark ? KeyboardDesignTokens.Palette.keyNormalDark : KeyboardDesignTokens.Palette.keyNormalLight
             layer.cornerRadius = KeyboardDesignTokens.Metrics.keyCorner
             layer.shadowColor = UIColor.black.cgColor
-            layer.shadowOpacity = isDark ? 0.18 : 0.1
-            layer.shadowRadius = 0.8
-            layer.shadowOffset = CGSize(width: 0, height: 1)
-            backgroundColor = key.role == .character
-                ? (isDark ? KeyboardDesignTokens.Palette.keyNormalDark : KeyboardDesignTokens.Palette.keyNormalLight)
-                : (isDark ? KeyboardDesignTokens.Palette.keySpecialDark : KeyboardDesignTokens.Palette.keySpecialLight)
+            layer.shadowOpacity = isDark ? 0.22 : 0.13
+            layer.shadowRadius = 1.2
+            layer.shadowOffset = CGSize(width: 0, height: 1.2)
 
-            primary.font = key.role == .character ? KeyboardDesignTokens.Typography.primary : KeyboardDesignTokens.Typography.function
             primary.text = key.primaryLabel
+            primary.font = KeyboardDesignTokens.Typography.primary
             primary.textAlignment = .center
-            primary.textColor = key.role == .character ? .label : KeyboardDesignTokens.Palette.brandBlue
+            primary.textColor = .label
+            primary.adjustsFontSizeToFitWidth = true
+            primary.minimumScaleFactor = 0.65
 
-            secondary.font = KeyboardDesignTokens.Typography.secondary
             secondary.text = key.secondaryLabel
+            secondary.font = KeyboardDesignTokens.Typography.secondary
             secondary.textAlignment = .center
             secondary.textColor = isDark ? KeyboardDesignTokens.Palette.ipaSecondaryDark : KeyboardDesignTokens.Palette.ipaSecondaryLight
             secondary.isHidden = key.secondaryLabel.isEmpty
+            secondary.adjustsFontSizeToFitWidth = true
+            secondary.minimumScaleFactor = 0.7
 
             overlay.backgroundColor = KeyboardDesignTokens.Palette.pressedOverlay
             overlay.layer.cornerRadius = KeyboardDesignTokens.Metrics.keyCorner
@@ -112,27 +170,31 @@ final class KeyboardView: UIView {
             let stack = UIStackView(arrangedSubviews: [primary, secondary])
             stack.axis = .vertical
             stack.alignment = .center
-            stack.spacing = 0
+            stack.spacing = -1
             stack.isUserInteractionEnabled = false
+            stack.translatesAutoresizingMaskIntoConstraints = false
 
             addSubview(stack)
             addSubview(overlay)
-            stack.translatesAutoresizingMaskIntoConstraints = false
             overlay.translatesAutoresizingMaskIntoConstraints = false
+
             NSLayoutConstraint.activate([
                 stack.centerXAnchor.constraint(equalTo: centerXAnchor),
                 stack.centerYAnchor.constraint(equalTo: centerYAnchor),
+                stack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 4),
+                stack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4),
                 overlay.leadingAnchor.constraint(equalTo: leadingAnchor),
                 overlay.trailingAnchor.constraint(equalTo: trailingAnchor),
                 overlay.topAnchor.constraint(equalTo: topAnchor),
                 overlay.bottomAnchor.constraint(equalTo: bottomAnchor),
-                heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
+                heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.keyHeight)
             ])
 
             accessibilityLabel = key.accessibilityLabel
             addTarget(self, action: #selector(touchDown), for: .touchDown)
             addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchCancel, .touchDragExit, .touchUpOutside])
             addTarget(self, action: #selector(tapped), for: .touchUpInside)
+
             let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
             longPress.minimumPressDuration = 0.35
             addGestureRecognizer(longPress)
@@ -142,17 +204,20 @@ final class KeyboardView: UIView {
 
         @objc private func touchDown() {
             UIView.animate(withDuration: 0.08) {
-                self.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
+                self.transform = CGAffineTransform(scaleX: 0.965, y: 0.965)
                 self.overlay.alpha = 1
             }
         }
+
         @objc private func touchUp() {
             UIView.animate(withDuration: 0.12) {
                 self.transform = .identity
                 self.overlay.alpha = 0
             }
         }
+
         @objc private func tapped() { onTap?() }
+
         @objc private func handleLongPress(_ gr: UILongPressGestureRecognizer) {
             guard gr.state == .began, !key.alternatives.isEmpty else { return }
             onLongPress?(self)
@@ -164,10 +229,13 @@ final class KeyboardView: UIView {
     private let lang = Lang.current()
     private var currentMode: InputMode = .candidate
     private var currentPanel: Panel = .letters
+    private var composeBuffer = ""
+    private var convertedPreview = ""
+    private var latestCandidates: [String] = []
 
     private let rootStack = UIStackView()
     private let previewCard = UIView()
-    private let logoView = UIImageView()
+    private let logoView = BrandLogoView()
     private let ipaResultLabel = UILabel()
     private let ipaResultTitleLabel = UILabel()
     private let codeLabel = UILabel()
@@ -179,9 +247,6 @@ final class KeyboardView: UIView {
     private let rowsStack = UIStackView()
     private let bottomStack = UIStackView()
 
-    private let shiftButton = UIButton(type: .system)
-    private let modeButton = UIButton(type: .system)
-    private let backspaceButton = UIButton(type: .system)
     private let symbolToggleButton = UIButton(type: .system)
     private let globeButton = UIButton(type: .system)
     private let spaceButton = UIButton(type: .system)
@@ -199,85 +264,100 @@ final class KeyboardView: UIView {
 
     required init?(coder: NSCoder) { nil }
 
-    func updateBottomAction(_ action: BottomAction) {
-        actionButton.setTitle(lang.actionTitle(action), for: .normal)
-    }
-
-    func updateCandidates(_ candidates: [String]) {
-        // Design稿无独立候选条，候选仅通过顶部结果文本承载
-        if let first = candidates.first {
-            ipaResultLabel.text = first.components(separatedBy: " [").first ?? first
-        }
-    }
-
-    func updateStatus(mode: InputMode, composeBuffer: String, preview: String) {
-        currentMode = mode
-        let input = composeBuffer.isEmpty ? "-" : composeBuffer
-        let output = preview.isEmpty ? "-" : preview
-        codeLabel.text = input
-        ipaResultLabel.text = output
-
-        let title = mode == .candidate ? lang.candidateTitle : lang.dictionaryTitle
-        modePillButton.setTitle(title, for: .normal)
-        modeButton.setTitle(title, for: .normal)
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        applyTheme()
         renderKeys()
     }
 
+    func updateBottomAction(_ action: BottomAction) {
+        actionButton.setTitle(lang.actionTitle(action), for: .normal)
+        styleFunctionKey(actionButton, style: .action)
+    }
+
+    func updateCandidates(_ candidates: [String]) {
+        latestCandidates = candidates
+        refreshPreviewLabels()
+    }
+
+    func updateStatus(mode: InputMode, composeBuffer: String, preview: String) {
+        let shouldRender = currentMode != mode
+        currentMode = mode
+        self.composeBuffer = composeBuffer
+        self.convertedPreview = preview
+
+        let title = mode == .candidate ? lang.candidateTitle : lang.dictionaryTitle
+        modePillButton.setTitle(title, for: .normal)
+
+        refreshPreviewLabels()
+        if shouldRender { renderKeys() }
+    }
+
     private func setupUI() {
-        let isDark = traitCollection.userInterfaceStyle == .dark
-        backgroundColor = isDark ? KeyboardDesignTokens.Palette.backgroundDark : KeyboardDesignTokens.Palette.backgroundLight
         translatesAutoresizingMaskIntoConstraints = false
         heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.keyboardHeight).isActive = true
 
         rootStack.axis = .vertical
-        rootStack.spacing = 8
+        rootStack.spacing = KeyboardDesignTokens.Metrics.verticalSpacing
         rootStack.translatesAutoresizingMaskIntoConstraints = false
         addSubview(rootStack)
+
         NSLayoutConstraint.activate([
-            rootStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            rootStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            rootStack.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            rootStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
+            rootStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: KeyboardDesignTokens.Metrics.horizontalPadding),
+            rootStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -KeyboardDesignTokens.Metrics.horizontalPadding),
+            rootStack.topAnchor.constraint(equalTo: topAnchor, constant: KeyboardDesignTokens.Metrics.verticalPadding),
+            rootStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -KeyboardDesignTokens.Metrics.verticalPadding)
         ])
 
-        setupPreview(isDark: isDark)
+        setupPreview()
         setupQuickIPA()
         setupRows()
         setupBottomTools()
+        applyTheme()
     }
 
-    private func setupPreview(isDark: Bool) {
+    private func applyTheme() {
+        let isDark = traitCollection.userInterfaceStyle == .dark
+        backgroundColor = isDark ? KeyboardDesignTokens.Palette.backgroundDark : KeyboardDesignTokens.Palette.backgroundLight
         previewCard.backgroundColor = isDark ? KeyboardDesignTokens.Palette.previewCardDark : KeyboardDesignTokens.Palette.previewCardLight
-        previewCard.layer.cornerRadius = 16
-
-        logoView.contentMode = .scaleAspectFill
-        if let img = UIImage(contentsOfFile: "/Users/guohai/Downloads/fe0b7945-1e2d-4dc6-b268-b3c537583231.png") {
-            logoView.image = img
-        } else {
-            logoView.backgroundColor = KeyboardDesignTokens.Palette.brandBlue
-        }
-        logoView.layer.cornerRadius = 12
-        logoView.layer.masksToBounds = true
-
-        ipaResultLabel.font = .systemFont(ofSize: 24, weight: .semibold)
+        divider.backgroundColor = (isDark ? UIColor.white : UIColor.black).withAlphaComponent(0.16)
+        ipaResultTitleLabel.textColor = isDark ? KeyboardDesignTokens.Palette.secondaryTextDark : KeyboardDesignTokens.Palette.secondaryTextLight
+        codeTitleLabel.textColor = isDark ? KeyboardDesignTokens.Palette.secondaryTextDark : KeyboardDesignTokens.Palette.secondaryTextLight
+        codeLabel.textColor = .label
         ipaResultLabel.textColor = KeyboardDesignTokens.Palette.brandBlue
-        ipaResultTitleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
-        ipaResultTitleLabel.textColor = .secondaryLabel
+        styleFunctionKey(modePillButton, style: .outline)
+        styleFunctionKey(symbolToggleButton, style: .standard)
+        styleFunctionKey(globeButton, style: .standard)
+        styleFunctionKey(spaceButton, style: .white)
+        styleFunctionKey(actionButton, style: .action)
+    }
+
+    private func setupPreview() {
+        previewCard.layer.cornerRadius = 20
+        previewCard.layer.shadowColor = UIColor.black.cgColor
+        previewCard.layer.shadowOpacity = 0.06
+        previewCard.layer.shadowRadius = 10
+        previewCard.layer.shadowOffset = CGSize(width: 0, height: 5)
+
+        ipaResultLabel.font = KeyboardDesignTokens.Typography.previewValue
+        ipaResultLabel.textColor = KeyboardDesignTokens.Palette.brandBlue
+        ipaResultLabel.adjustsFontSizeToFitWidth = true
+        ipaResultLabel.minimumScaleFactor = 0.68
+        ipaResultLabel.lineBreakMode = .byTruncatingTail
+
+        ipaResultTitleLabel.font = KeyboardDesignTokens.Typography.previewCaption
         ipaResultTitleLabel.text = lang.ipaResultTitle
 
-        codeLabel.font = .systemFont(ofSize: 24, weight: .semibold)
-        codeLabel.textColor = .label
-        codeTitleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
-        codeTitleLabel.textColor = .secondaryLabel
+        codeLabel.font = KeyboardDesignTokens.Typography.previewValue
+        codeLabel.adjustsFontSizeToFitWidth = true
+        codeLabel.minimumScaleFactor = 0.68
+        codeLabel.lineBreakMode = .byTruncatingTail
+
+        codeTitleLabel.font = KeyboardDesignTokens.Typography.previewCaption
         codeTitleLabel.text = lang.codeTitle
 
-        divider.backgroundColor = UIColor.separator.withAlphaComponent(0.4)
-
         modePillButton.setTitle(lang.candidateTitle, for: .normal)
-        styleFunctionKey(modePillButton)
-        modePillButton.backgroundColor = .clear
-        modePillButton.layer.borderWidth = 1
-        modePillButton.layer.borderColor = UIColor.separator.withAlphaComponent(0.4).cgColor
         modePillButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         modePillButton.addAction(UIAction { [weak self] _ in
             self?.delegate?.keyboardViewDidSwitchFeature()
@@ -285,11 +365,15 @@ final class KeyboardView: UIView {
 
         let resultCol = UIStackView(arrangedSubviews: [ipaResultLabel, ipaResultTitleLabel])
         resultCol.axis = .vertical
-        resultCol.spacing = 2
+        resultCol.spacing = 3
+        resultCol.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        resultCol.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         let codeCol = UIStackView(arrangedSubviews: [codeLabel, codeTitleLabel])
         codeCol.axis = .vertical
-        codeCol.spacing = 2
+        codeCol.spacing = 3
+        codeCol.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        codeCol.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         let content = UIStackView(arrangedSubviews: [logoView, resultCol, divider, codeCol, modePillButton])
         content.axis = .horizontal
@@ -299,17 +383,17 @@ final class KeyboardView: UIView {
 
         previewCard.addSubview(content)
         NSLayoutConstraint.activate([
-            logoView.widthAnchor.constraint(equalToConstant: 82),
-            logoView.heightAnchor.constraint(equalToConstant: 82),
+            logoView.widthAnchor.constraint(equalToConstant: 68),
+            logoView.heightAnchor.constraint(equalToConstant: 68),
             divider.widthAnchor.constraint(equalToConstant: 1),
-            divider.heightAnchor.constraint(equalToConstant: 56),
-            modePillButton.widthAnchor.constraint(equalToConstant: 92),
+            divider.heightAnchor.constraint(equalToConstant: 52),
+            modePillButton.widthAnchor.constraint(equalToConstant: 86),
             modePillButton.heightAnchor.constraint(equalToConstant: 56),
-            content.leadingAnchor.constraint(equalTo: previewCard.leadingAnchor, constant: 14),
-            content.trailingAnchor.constraint(equalTo: previewCard.trailingAnchor, constant: -14),
-            content.topAnchor.constraint(equalTo: previewCard.topAnchor, constant: 12),
-            content.bottomAnchor.constraint(equalTo: previewCard.bottomAnchor, constant: -12),
-            previewCard.heightAnchor.constraint(equalToConstant: 116)
+            content.leadingAnchor.constraint(equalTo: previewCard.leadingAnchor, constant: 16),
+            content.trailingAnchor.constraint(equalTo: previewCard.trailingAnchor, constant: -16),
+            content.topAnchor.constraint(equalTo: previewCard.topAnchor, constant: 14),
+            content.bottomAnchor.constraint(equalTo: previewCard.bottomAnchor, constant: -14),
+            previewCard.heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.previewHeight)
         ])
 
         rootStack.addArrangedSubview(previewCard)
@@ -317,34 +401,44 @@ final class KeyboardView: UIView {
 
     private func setupQuickIPA() {
         quickStack.axis = .horizontal
-        quickStack.spacing = 6
+        quickStack.spacing = KeyboardDesignTokens.Metrics.keySpacing
         quickStack.distribution = .fillEqually
 
-        for ipa in KeyboardLayout.quickIPA {
-            let button = makeFunctionButton(title: ipa)
-            button.addAction(UIAction { [weak self] _ in self?.delegate?.keyboardViewDidTapQuickIPA(ipa) }, for: .touchUpInside)
+        KeyboardLayout.quickIPA.forEach { ipa in
+            let button = makeFunctionButton(title: ipa, style: .quick)
+            button.titleLabel?.font = KeyboardDesignTokens.Typography.quickIPA
+            button.addAction(UIAction { [weak self] _ in
+                self?.delegate?.keyboardViewDidTapQuickIPA(ipa)
+            }, for: .touchUpInside)
             quickStack.addArrangedSubview(button)
         }
 
-        let more = makeFunctionButton(title: "+")
-        more.layer.borderWidth = 1
-        more.layer.borderColor = UIColor.systemGray3.cgColor
-        more.backgroundColor = .clear
+        let more = makeFunctionButton(title: "+", style: .outline)
+        more.titleLabel?.font = .systemFont(ofSize: 26, weight: .semibold)
+        more.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.currentPanel = self.currentPanel == .letters ? .symbols : .letters
+            self.symbolToggleButton.setTitle(self.currentPanel == .letters ? "123" : "ABC", for: .normal)
+            self.renderKeys()
+            self.delegate?.keyboardViewDidToggleSymbolPanel()
+        }, for: .touchUpInside)
         quickStack.addArrangedSubview(more)
 
-        quickStack.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        quickStack.heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.quickRowHeight).isActive = true
         rootStack.addArrangedSubview(quickStack)
     }
 
     private func setupRows() {
         rowsStack.axis = .vertical
-        rowsStack.spacing = 7
+        rowsStack.spacing = KeyboardDesignTokens.Metrics.rowSpacing
         rootStack.addArrangedSubview(rowsStack)
     }
 
     private func setupBottomTools() {
         bottomStack.axis = .horizontal
-        bottomStack.spacing = 6
+        bottomStack.spacing = KeyboardDesignTokens.Metrics.keySpacing
+        bottomStack.alignment = .fill
+        bottomStack.distribution = .fill
 
         symbolToggleButton.setTitle("123", for: .normal)
         symbolToggleButton.addAction(UIAction { [weak self] _ in
@@ -355,86 +449,102 @@ final class KeyboardView: UIView {
             self.delegate?.keyboardViewDidToggleSymbolPanel()
         }, for: .touchUpInside)
 
-        globeButton.setTitle("🌐", for: .normal)
-        globeButton.addAction(UIAction { [weak self] _ in self?.delegate?.keyboardViewDidTapNextKeyboard() }, for: .touchUpInside)
+        globeButton.setTitle(nil, for: .normal)
+        globeButton.setImage(UIImage(systemName: "globe"), for: .normal)
+        globeButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.keyboardViewDidTapNextKeyboard()
+        }, for: .touchUpInside)
 
         spaceButton.setTitle(lang.spaceTitle, for: .normal)
-        spaceButton.addAction(UIAction { [weak self] _ in self?.delegate?.keyboardViewDidTapSpace() }, for: .touchUpInside)
+        spaceButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.keyboardViewDidTapSpace()
+        }, for: .touchUpInside)
 
-        actionButton.setTitle("return", for: .normal)
-        actionButton.addAction(UIAction { [weak self] _ in self?.delegate?.keyboardViewDidTapContextAction() }, for: .touchUpInside)
+        actionButton.setTitle(lang.actionTitle(.return), for: .normal)
+        actionButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.keyboardViewDidTapContextAction()
+        }, for: .touchUpInside)
 
         [symbolToggleButton, globeButton, spaceButton, actionButton].forEach {
-            styleFunctionKey($0)
-            $0.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.bottomKeyHeight).isActive = true
             bottomStack.addArrangedSubview($0)
         }
 
-        symbolToggleButton.widthAnchor.constraint(equalToConstant: 58).isActive = true
-        globeButton.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        actionButton.widthAnchor.constraint(equalToConstant: 84).isActive = true
+        symbolToggleButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        globeButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        actionButton.widthAnchor.constraint(equalToConstant: 96).isActive = true
 
         rootStack.addArrangedSubview(bottomStack)
     }
 
     private func renderKeys() {
-        rowsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        rowsStack.arrangedSubviews.forEach { view in
+            rowsStack.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+
         let rows = currentPanel == .letters ? KeyboardLayout.letterRows : KeyboardLayout.symbolRows
 
-        rows.enumerated().forEach { index, row in
-            let stack = UIStackView()
-            stack.axis = .horizontal
-            stack.spacing = 6
-            stack.distribution = .fillEqually
+        for (index, row) in rows.enumerated() {
+            let rowContainer = UIStackView()
+            rowContainer.axis = .horizontal
+            rowContainer.alignment = .fill
+            rowContainer.spacing = 0
+
+            let leadingPad = UIView()
+            let trailingPad = UIView()
+            let pad = rowPadding(for: index, panel: currentPanel)
+            leadingPad.widthAnchor.constraint(equalToConstant: pad).isActive = true
+            trailingPad.widthAnchor.constraint(equalToConstant: pad).isActive = true
+
+            let rowStack = UIStackView()
+            rowStack.axis = .horizontal
+            rowStack.spacing = KeyboardDesignTokens.Metrics.keySpacing
+            rowStack.distribution = .fillEqually
 
             if currentPanel == .letters, index == 2 {
-                styleFunctionKey(shiftButton)
-                shiftButton.setImage(UIImage(systemName: "shift"), for: .normal)
-                shiftButton.tintColor = .label
-                shiftButton.widthAnchor.constraint(equalToConstant: 54).isActive = true
-                stack.addArrangedSubview(shiftButton)
+                let shift = makeIconButton(systemName: "shift", style: .standard)
+                rowStack.addArrangedSubview(shift)
             }
 
-            for key in row {
+            row.forEach { key in
                 let model = modelForKey(key, lettersPanel: currentPanel == .letters)
                 let button = KeyboardKeyButton(key: model, isDark: traitCollection.userInterfaceStyle == .dark)
                 button.onTap = { [weak self] in
                     guard let self else { return }
-                    if self.currentPanel == .letters { self.delegate?.keyboardViewDidTapLetter(model.output) }
-                    else { self.delegate?.keyboardViewDidTapPunctuation(model.output) }
+                    if self.currentPanel == .letters {
+                        self.delegate?.keyboardViewDidTapLetter(model.output)
+                    } else {
+                        self.delegate?.keyboardViewDidTapPunctuation(model.output)
+                    }
                 }
-                button.onLongPress = { [weak self] source in self?.showAlternatives(from: source) }
-                stack.addArrangedSubview(button)
+                button.onLongPress = { [weak self] source in
+                    self?.showAlternatives(from: source)
+                }
+                rowStack.addArrangedSubview(button)
             }
 
             if currentPanel == .letters, index == 2 {
-                styleFunctionKey(modeButton)
-                modeButton.setImage(nil, for: .normal)
-                modeButton.setTitle(currentMode == .candidate ? lang.candidateTitle : lang.dictionaryTitle, for: .normal)
-                modeButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-                modeButton.widthAnchor.constraint(equalToConstant: 72).isActive = true
-                modeButton.addAction(UIAction { [weak self] _ in self?.delegate?.keyboardViewDidSwitchFeature() }, for: .touchUpInside)
-                stack.addArrangedSubview(modeButton)
-
-                styleFunctionKey(backspaceButton)
-                backspaceButton.setImage(UIImage(systemName: "delete.left"), for: .normal)
-                backspaceButton.tintColor = KeyboardDesignTokens.Palette.brandBlue
-                backspaceButton.widthAnchor.constraint(equalToConstant: 54).isActive = true
-                backspaceButton.addAction(UIAction { [weak self] _ in self?.delegate?.keyboardViewDidTapBackspace() }, for: .touchUpInside)
-                stack.addArrangedSubview(backspaceButton)
+                let backspace = makeIconButton(systemName: "delete.left", style: .standard)
+                backspace.addAction(UIAction { [weak self] _ in
+                    self?.delegate?.keyboardViewDidTapBackspace()
+                }, for: .touchUpInside)
+                rowStack.addArrangedSubview(backspace)
             }
 
-            let padded = UIStackView()
-            padded.axis = .horizontal
-            let lead = UIView()
-            let trail = UIView()
-            let pad: CGFloat = index == 1 ? 16 : 0
-            lead.widthAnchor.constraint(equalToConstant: pad).isActive = true
-            trail.widthAnchor.constraint(equalToConstant: pad).isActive = true
-            padded.addArrangedSubview(lead)
-            padded.addArrangedSubview(stack)
-            padded.addArrangedSubview(trail)
-            rowsStack.addArrangedSubview(padded)
+            rowContainer.addArrangedSubview(leadingPad)
+            rowContainer.addArrangedSubview(rowStack)
+            rowContainer.addArrangedSubview(trailingPad)
+            rowsStack.addArrangedSubview(rowContainer)
+        }
+    }
+
+    private func rowPadding(for index: Int, panel: Panel) -> CGFloat {
+        guard panel == .letters else { return index == 2 ? 38 : 0 }
+        switch index {
+        case 1: return 28
+        case 2: return 0
+        default: return 0
         }
     }
 
@@ -442,20 +552,44 @@ final class KeyboardView: UIView {
         if !lettersPanel {
             return KeyModel(id: key, primaryLabel: key, secondaryLabel: "", output: key, role: .character, alternatives: [], accessibilityLabel: key)
         }
-        let secondary = currentMode == .candidate ? (KeyboardLayout.secondaryIPA[key] ?? "") : key
+
+        let secondary = KeyboardLayout.secondaryIPA[key] ?? ""
         let alternatives = KeyboardLayout.alternatives[key] ?? []
         let label = secondary.isEmpty ? key.uppercased() : "\(key.uppercased()), outputs \(secondary)"
         return KeyModel(id: key, primaryLabel: key, secondaryLabel: secondary, output: key, role: .character, alternatives: alternatives, accessibilityLabel: label)
     }
 
+    private func refreshPreviewLabels() {
+        let candidate = latestCandidates.first?.components(separatedBy: " [").first
+        let displayResult: String
+
+        if currentMode == .dictionary, let candidate, !candidate.isEmpty, !composeBuffer.isEmpty {
+            displayResult = candidate
+        } else if !convertedPreview.isEmpty {
+            displayResult = convertedPreview
+        } else if !composeBuffer.isEmpty {
+            displayResult = composeBuffer
+        } else {
+            displayResult = "æ"
+        }
+
+        ipaResultLabel.text = displayResult
+        codeLabel.text = composeBuffer.isEmpty ? lang.emptyCodeHint : composeBuffer
+
+        let dim = composeBuffer.isEmpty && convertedPreview.isEmpty && latestCandidates.isEmpty
+        ipaResultLabel.alpha = dim ? 0.38 : 1
+        codeLabel.alpha = dim ? 0.48 : 1
+    }
+
     private func showAlternatives(from source: KeyboardKeyButton) {
         alternativeOverlay?.removeFromSuperview()
+
         let card = UIView()
         card.backgroundColor = traitCollection.userInterfaceStyle == .dark ? KeyboardDesignTokens.Palette.previewCardDark : .white
-        card.layer.cornerRadius = 10
+        card.layer.cornerRadius = 12
         card.layer.shadowColor = UIColor.black.cgColor
         card.layer.shadowOpacity = 0.18
-        card.layer.shadowRadius = 3
+        card.layer.shadowRadius = 5
         card.layer.shadowOffset = CGSize(width: 0, height: 2)
         card.translatesAutoresizingMaskIntoConstraints = false
 
@@ -466,19 +600,21 @@ final class KeyboardView: UIView {
         card.addSubview(row)
 
         source.key.alternatives.forEach { alt in
-            let b = makeFunctionButton(title: alt)
-            b.widthAnchor.constraint(equalToConstant: 44).isActive = true
-            b.addAction(UIAction { [weak self] _ in
+            let button = makeFunctionButton(title: alt, style: .quick)
+            button.widthAnchor.constraint(equalToConstant: 46).isActive = true
+            button.addAction(UIAction { [weak self] _ in
                 self?.alternativeOverlay?.removeFromSuperview()
                 self?.delegate?.keyboardViewDidSelectAlternative(alt)
             }, for: .touchUpInside)
-            row.addArrangedSubview(b)
+            row.addArrangedSubview(button)
         }
 
         addSubview(card)
+        layoutIfNeeded()
         let origin = source.convert(source.bounds, to: self)
-        let top = max(4, origin.minY - 44)
-        let left = max(4, min(bounds.width - CGFloat(max(1, source.key.alternatives.count)) * 50 - 8, origin.minX - 10))
+        let width = CGFloat(max(1, source.key.alternatives.count)) * 52 + 12
+        let left = max(KeyboardDesignTokens.Metrics.horizontalPadding, min(bounds.width - width - KeyboardDesignTokens.Metrics.horizontalPadding, origin.minX - 12))
+        let top = max(KeyboardDesignTokens.Metrics.verticalPadding, origin.minY - 50)
 
         NSLayoutConstraint.activate([
             card.leadingAnchor.constraint(equalTo: leadingAnchor, constant: left),
@@ -487,22 +623,75 @@ final class KeyboardView: UIView {
             row.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -6),
             row.topAnchor.constraint(equalTo: card.topAnchor, constant: 6),
             row.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -6),
-            card.heightAnchor.constraint(equalToConstant: 44)
+            card.heightAnchor.constraint(equalToConstant: 48),
+            card.widthAnchor.constraint(equalToConstant: width)
         ])
+
         alternativeOverlay = card
     }
 
-    private func styleFunctionKey(_ button: UIButton) {
-        button.backgroundColor = traitCollection.userInterfaceStyle == .dark ? KeyboardDesignTokens.Palette.keySpecialDark : KeyboardDesignTokens.Palette.keySpecialLight
-        button.setTitleColor(KeyboardDesignTokens.Palette.brandBlue, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .medium)
-        button.layer.cornerRadius = KeyboardDesignTokens.Metrics.keyCorner
+    private func makeIconButton(systemName: String, style: FunctionKeyStyle) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: systemName), for: .normal)
+        styleFunctionKey(button, style: style)
+        button.heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.keyHeight).isActive = true
+        return button
     }
 
-    private func makeFunctionButton(title: String) -> UIButton {
+    private func makeFunctionButton(title: String, style: FunctionKeyStyle) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        styleFunctionKey(button)
+        styleFunctionKey(button, style: style)
         return button
+    }
+
+    private func styleFunctionKey(_ button: UIButton, style: FunctionKeyStyle) {
+        let isDark = traitCollection.userInterfaceStyle == .dark
+        button.layer.cornerRadius = KeyboardDesignTokens.Metrics.keyCorner
+        button.layer.masksToBounds = false
+        button.layer.borderWidth = 0
+        button.layer.borderColor = nil
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.7
+        button.titleLabel?.textAlignment = .center
+        button.tintColor = .label
+        button.setTitleColor(.label, for: .normal)
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.06
+        button.layer.shadowRadius = 1
+        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+
+        switch style {
+        case .standard:
+            button.backgroundColor = isDark ? KeyboardDesignTokens.Palette.keySpecialDark : KeyboardDesignTokens.Palette.keySpecialLight
+            button.setTitleColor(.label, for: .normal)
+            button.tintColor = .label
+            button.titleLabel?.font = KeyboardDesignTokens.Typography.function
+        case .white:
+            button.backgroundColor = isDark ? KeyboardDesignTokens.Palette.spaceDark : KeyboardDesignTokens.Palette.spaceLight
+            button.setTitleColor(.label, for: .normal)
+            button.tintColor = .label
+            button.titleLabel?.font = KeyboardDesignTokens.Typography.function
+        case .quick:
+            button.backgroundColor = isDark ? KeyboardDesignTokens.Palette.quickKeyDark : KeyboardDesignTokens.Palette.quickKeyLight
+            button.setTitleColor(KeyboardDesignTokens.Palette.brandBlue, for: .normal)
+            button.tintColor = KeyboardDesignTokens.Palette.brandBlue
+            button.titleLabel?.font = KeyboardDesignTokens.Typography.quickIPA
+        case .outline:
+            button.backgroundColor = isDark ? UIColor.white.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.45)
+            button.setTitleColor(KeyboardDesignTokens.Palette.brandBlue, for: .normal)
+            button.tintColor = KeyboardDesignTokens.Palette.brandBlue
+            button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+            button.layer.borderWidth = 1.2
+            button.layer.borderColor = (isDark ? UIColor.white : UIColor.black).withAlphaComponent(0.18).cgColor
+        case .action:
+            button.backgroundColor = KeyboardDesignTokens.Palette.brandBlue
+            button.setTitleColor(.white, for: .normal)
+            button.tintColor = .white
+            button.titleLabel?.font = KeyboardDesignTokens.Typography.action
+            button.layer.shadowOpacity = 0.18
+            button.layer.shadowRadius = 3
+            button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        }
     }
 }
