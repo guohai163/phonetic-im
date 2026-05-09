@@ -1,0 +1,92 @@
+name: PhoneticIM
+options:
+  minimumXcodeGenVersion: 2.38.0
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: org.guohai.pim
+    DEVELOPMENT_TEAM: RRC34WMGHN
+    SWIFT_VERSION: 5.0
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    TARGETED_DEVICE_FAMILY: "1,2"
+    CODE_SIGN_STYLE: Automatic
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  PhoneticIM:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: ios/IPAKeyboardCore
+    resources:
+      - path: App/user-guide.html
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: PhoneticIM
+        CFBundleName: PhoneticIM
+        UILaunchScreen: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.guohai.pim
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: Apple Distribution
+        PROVISIONING_PROFILE_SPECIFIER: pim-ios
+    dependencies:
+      - target: IPAKeyboard
+        embed: true
+    scheme:
+      gatherCoverageData: false
+      testTargets:
+        - PhoneticIMTests
+
+  IPAKeyboard:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: ios/IPAKeyboardCore
+      - path: ios/KeyboardExtension
+    resources:
+      - path: ios/KeyboardExtension/en_UK.txt
+    info:
+      path: ios/KeyboardExtension/Info.plist
+      properties:
+        CFBundleDisplayName: IPA Keyboard
+        CFBundleName: IPAKeyboard
+        NSExtension:
+          NSExtensionAttributes:
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+            PrimaryLanguage: en
+            RequestsOpenAccess: false
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.guohai.pim.keyboard
+        APPLICATION_EXTENSION_API_ONLY: true
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: Apple Distribution
+        PROVISIONING_PROFILE_SPECIFIER: pim-key-ios
+
+  PhoneticIMTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: PhoneticIM
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.guohai.pim.tests
+        CODE_SIGNING_ALLOWED: NO

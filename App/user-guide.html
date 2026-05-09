@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#243B7B" />
+  <title>英语 IPA 音标输入法说明文档</title>
+  <style>
+    :root{
+      --bg:#F5F7FB;
+      --ink:#132033;
+      --muted:#667085;
+      --line:#E4E8F1;
+      --card:#FFFFFF;
+      --blue:#2563EB;
+      --blue-2:#EAF2FF;
+      --green:#16A34A;
+      --green-2:#EAF8EF;
+      --purple:#7C3AED;
+      --purple-2:#F2ECFF;
+      --orange:#EA580C;
+      --orange-2:#FFF4E8;
+      --shadow: 0 10px 28px rgba(18, 35, 71, .08);
+      --radius: 22px;
+      --ipa-font: "SF Pro Text", "Segoe UI", "Segoe UI Symbol", "Noto Sans", "Noto Sans Symbols", "Arial Unicode MS", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --cn-font: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{
+      margin:0;
+      font-family:var(--cn-font);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(124,58,237,.13), transparent 30%),
+        linear-gradient(180deg, #F8FAFF 0%, var(--bg) 42%, #F4F7FC 100%);
+      color:var(--ink);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .app-shell{
+      width:100%;
+      max-width:520px;
+      margin:0 auto;
+      padding:18px 14px 42px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:30px;
+      padding:28px 20px 22px;
+      color:#fff;
+      background:
+        linear-gradient(135deg, #172554 0%, #243B7B 50%, #5B21B6 100%);
+      box-shadow:0 18px 44px rgba(32, 49, 119, .28);
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      width:190px;height:190px;
+      right:-70px;top:-70px;
+      background:rgba(255,255,255,.12);
+      border-radius:50%;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:120px;height:120px;
+      left:-42px;bottom:-56px;
+      background:rgba(255,255,255,.09);
+      border-radius:50%;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      position:relative;
+      z-index:1;
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.78);
+      font-weight:700;
+    }
+    .spark{width:9px;height:9px;border-radius:50%;background:#93C5FD;box-shadow:16px 0 #C4B5FD, 32px 0 #FCD34D;}
+    h1{
+      position:relative;
+      z-index:1;
+      margin:12px 0 10px;
+      font-size:30px;
+      line-height:1.18;
+      letter-spacing:-.02em;
+    }
+    .hero p{
+      position:relative;
+      z-index:1;
+      margin:0;
+      color:rgba(255,255,255,.84);
+      line-height:1.75;
+      font-size:14px;
+    }
+    .hero-badges{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:18px;
+    }
+    .badge{
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.12);
+      border-radius:999px;
+      color:#fff;
+      font-size:12px;
+      font-weight:700;
+      backdrop-filter: blur(10px);
+    }
+
+    .quick-nav{
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding:12px 0 10px;
+      background:linear-gradient(180deg, rgba(248,250,255,.96), rgba(248,250,255,.80));
+      backdrop-filter: blur(12px);
+      scrollbar-width:none;
+    }
+    .quick-nav::-webkit-scrollbar{display:none;}
+    .quick-nav a{
+      flex:0 0 auto;
+      text-decoration:none;
+      color:#1E3A8A;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:13px;
+      font-weight:800;
+      box-shadow:0 5px 14px rgba(18,35,71,.05);
+    }
+
+    section.card{
+      margin-top:14px;
+      background:var(--card);
+      border:1px solid rgba(228,232,241,.95);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:17px 14px;
+    }
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .num{
+      width:34px;height:34px;
+      display:inline-grid;
+      place-items:center;
+      color:#fff;
+      font-weight:900;
+      border-radius:13px;
+      box-shadow:0 6px 14px rgba(37,99,235,.20);
+    }
+    .num.blue{background:var(--blue);}
+    .num.green{background:var(--green);}
+    .num.purple{background:var(--purple);}
+    .num.orange{background:var(--orange);}
+    h2{
+      margin:0;
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:-.01em;
+    }
+    .hint{
+      margin:3px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .icon{
+      flex:0 0 auto;
+      width:42px;height:42px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      font-size:22px;
+    }
+    .icon.blue{background:var(--blue-2);}
+    .icon.green{background:var(--green-2);}
+    .icon.purple{background:var(--purple-2);}
+    .icon.orange{background:var(--orange-2);}
+
+    .concept-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .concept{
+      border-radius:18px;
+      padding:13px 12px;
+      background:#F8FAFC;
+      border:1px solid var(--line);
+    }
+    .concept strong{display:block;font-size:15px;margin-bottom:6px;}
+    .concept span{display:block;color:var(--muted);font-size:12px;line-height:1.55;}
+
+    .phone-demo{
+      margin-top:14px;
+      border-radius:24px;
+      padding:12px;
+      background:linear-gradient(145deg,#0F172A,#1E293B);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 12px 26px rgba(2,6,23,.14);
+    }
+    .screen{
+      background:#fff;
+      border-radius:19px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .screen-top{
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      background:#F1F5F9;
+      border-bottom:1px solid #E2E8F0;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:#CBD5E1;}
+    .mock-input{
+      padding:14px;
+    }
+    .mock-line{display:flex;align-items:center;gap:8px;margin:5px 0;}
+    .label-mini{font-size:12px;color:var(--muted);width:52px;}
+    .code-pill,.ipa-pill{
+      font-family:var(--ipa-font);
+      flex:1;
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:18px;
+      line-height:1.25;
+    }
+    .code-pill{background:#EEF2FF;color:#1E3A8A;}
+    .ipa-pill{background:#ECFDF5;color:#14532D;}
+
+    .keyboard-wrap{
+      width:100%;
+      overflow-x:auto;
+      padding-bottom:4px;
+      scrollbar-width:none;
+    }
+    .keyboard-wrap::-webkit-scrollbar{display:none;}
+    .keyboard{
+      min-width:360px;
+      padding:10px 8px 12px;
+      border-radius:22px;
+      background:linear-gradient(180deg,#EEF3FF,#F8FAFC);
+      border:1px solid #DFE7F7;
+    }
+    .kbd-row{
+      display:grid;
+      gap:5px;
+      margin-bottom:6px;
+    }
+    .kbd-row.top{grid-template-columns:repeat(10,1fr);}
+    .kbd-row.middle{grid-template-columns:repeat(9,1fr);padding-left:16px;padding-right:16px;}
+    .kbd-row.bottom{grid-template-columns:repeat(7,1fr);padding-left:42px;padding-right:42px;margin-bottom:0;}
+    .key{
+      min-height:48px;
+      border:none;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 2px 0 #D8E0ED, 0 7px 12px rgba(15,23,42,.06);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
+    }
+    .key b{font-size:14px;line-height:1;color:#334155;}
+    .key span{font-family:var(--ipa-font);font-size:15px;font-weight:800;color:#2563EB;line-height:1.1;}
+    .key.special span{color:#7C3AED;}
+    .key.vowel span{color:#16A34A;}
+
+    .chip-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:9px;
+    }
+    .chip{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      border-radius:16px;
+      padding:11px 11px;
+      background:#F8FAFC;
+      border:1px solid var(--line);
+      min-height:48px;
+    }
+    .chip code{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color:#1E3A8A;
+      background:#EAF2FF;
+      border-radius:9px;
+      padding:4px 7px;
+      font-size:13px;
+      font-weight:800;
+    }
+    .chip .out{
+      font-family:var(--ipa-font);
+      font-weight:900;
+      font-size:19px;
+    }
+    .chip small{color:var(--muted);font-size:11px;}
+
+    .table-box{
+      overflow-x:auto;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      margin-top:10px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:360px;
+    }
+    th,td{
+      padding:11px 10px;
+      border-bottom:1px solid #EEF2F7;
+      text-align:left;
+      font-size:13px;
+      vertical-align:middle;
+      white-space:nowrap;
+    }
+    th{
+      background:#F8FAFC;
+      color:#475569;
+      font-size:12px;
+      letter-spacing:.03em;
+    }
+    tr:last-child td{border-bottom:none;}
+    td code{
+      display:inline-block;
+      min-width:38px;
+      text-align:center;
+      padding:4px 7px;
+      border-radius:9px;
+      background:#EEF2FF;
+      color:#1E3A8A;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight:800;
+    }
+    .ipa{
+      font-family:var(--ipa-font);
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.01em;
+    }
+    .word{color:#475569;}
+
+    .demo-panel{
+      border-radius:22px;
+      background:linear-gradient(180deg,#F8FAFC,#FFFFFF);
+      border:1px solid var(--line);
+      padding:13px;
+    }
+    .demo-panel label{
+      display:block;
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:8px;
+    }
+    textarea{
+      width:100%;
+      min-height:76px;
+      resize:vertical;
+      border:1px solid #CBD5E1;
+      border-radius:16px;
+      padding:12px;
+      font: 16px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      outline:none;
+      background:#fff;
+      color:#0F172A;
+    }
+    textarea:focus{border-color:#2563EB;box-shadow:0 0 0 4px rgba(37,99,235,.12);}
+    .result{
+      margin-top:10px;
+      padding:13px;
+      border-radius:16px;
+      background:#ECFDF5;
+      color:#14532D;
+      font-family:var(--ipa-font);
+      font-size:22px;
+      line-height:1.5;
+      min-height:56px;
+      word-break:break-word;
+    }
+    .demo-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:9px 12px;
+      background:#1E3A8A;
+      color:#fff;
+      font-weight:900;
+      font-size:13px;
+    }
+    .btn.secondary{background:#EAF2FF;color:#1E3A8A;}
+
+    .flow{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    .flow-step{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#F8FAFC;
+    }
+    .flow-step .bubble{
+      flex:0 0 auto;
+      width:28px;height:28px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:#EAF2FF;
+      color:#1E3A8A;
+      font-weight:900;
+    }
+    .flow-step strong{display:block;font-size:14px;margin-bottom:4px;}
+    .flow-step p{margin:0;color:var(--muted);font-size:12px;line-height:1.55;}
+
+    .example-list{
+      display:grid;
+      gap:9px;
+    }
+    .example{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      gap:7px;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:#fff;
+    }
+    .example .src{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background:#F1F5F9;
+      border-radius:12px;
+      padding:9px 8px;
+      color:#334155;
+      font-weight:800;
+      text-align:center;
+      font-size:14px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .example .arrow{color:#94A3B8;font-weight:900;}
+    .example .dest{
+      font-family:var(--ipa-font);
+      background:#F0FDF4;
+      border-radius:12px;
+      padding:9px 8px;
+      color:#166534;
+      font-weight:900;
+      text-align:center;
+      font-size:17px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .code-block{
+      margin:0;
+      overflow:auto;
+      max-height:360px;
+      padding:14px;
+      border-radius:18px;
+      background:#0F172A;
+      color:#D7E3FF;
+      font: 13px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space:pre;
+    }
+    .note{
+      margin:12px 0 0;
+      padding:12px;
+      border-radius:18px;
+      background:#FFF7ED;
+      border:1px solid #FED7AA;
+      color:#9A3412;
+      font-size:13px;
+      line-height:1.7;
+    }
+    .footer{
+      margin-top:16px;
+      text-align:center;
+      color:#64748B;
+      font-size:12px;
+      line-height:1.7;
+      padding:18px 6px 0;
+    }
+
+    @media (min-width:480px){
+      .app-shell{padding-left:18px;padding-right:18px;}
+      .chip-grid{grid-template-columns:repeat(3, minmax(0,1fr));}
+      .concept-grid{grid-template-columns:repeat(4,1fr);}
+    }
+
+    @media print{
+      body{background:#fff;}
+      .app-shell{max-width:none;padding:0;}
+      .quick-nav,.demo-actions{display:none;}
+      section.card,.hero{break-inside:avoid;box-shadow:none;}
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="eyebrow"><span class="spark"></span> IPA Input Method</div>
+      <h1>英语 IPA 音标输入法说明文档</h1>
+      <p>把英语常用 44 个音标映射到 26 个字母键。基础音标单键输入，特殊音标用双字母组合输入；适合手机、网页和输入法候选栏实现。</p>
+      <div class="hero-badges">
+        <span class="badge">26 字母键</span>
+        <span class="badge">最长匹配</span>
+        <span class="badge">移动端预览</span>
+        <span class="badge">无外部依赖</span>
+      </div>
+    </header>
+
+    <nav class="quick-nav" aria-label="文档导航">
+      <a href="#goal">设计目标</a>
+      <a href="#keyboard">键盘映射</a>
+      <a href="#vowels">元音</a>
+      <a href="#diphthongs">双元音</a>
+      <a href="#consonants">辅音</a>
+      <a href="#demo">转换演示</a>
+      <a href="#rules">实现规则</a>
+      <a href="#map">码表</a>
+    </nav>
+
+    <section class="card" id="goal">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num blue">1</span>
+          <div>
+            <h2>设计目标</h2>
+            <p class="hint">不是“一键一个音标”，而是“字母码 → IPA”的输入方案。</p>
+          </div>
+        </div>
+        <div class="icon blue">⌨️</div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept"><strong>易记</strong><span>尽量沿用英文拼写习惯：sh、ch、ng、th。</span></div>
+        <div class="concept"><strong>高效</strong><span>常见音标优先单键，复杂音标使用双字母。</span></div>
+        <div class="concept"><strong>稳定</strong><span>候选栏统一转换，避免输入过程中误替换。</span></div>
+        <div class="concept"><strong>可实现</strong><span>使用最长匹配算法即可完成解析。</span></div>
+      </div>
+
+      <div class="phone-demo" aria-label="输入法效果示意">
+        <div class="screen">
+          <div class="screen-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="mock-input">
+            <div class="mock-line"><span class="label-mini">输入码</span><span class="code-pill">faadhq</span></div>
+            <div class="mock-line"><span class="label-mini">候选</span><span class="ipa-pill">fɑːðə</span></div>
+            <div class="mock-line"><span class="label-mini">上屏</span><span class="ipa-pill">/fɑːðə/</span></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">说明：本文档面向英语学习中的常用 IPA 音标，并非完整国际音标全集。实际产品可以在此基础上增加美式音标、英式音标或专业语音学扩展。</p>
+    </section>
+
+    <section class="card" id="keyboard">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num green">2</span>
+          <div>
+            <h2>26 字母键基础映射</h2>
+            <p class="hint">单击字母键时的默认输出。特殊组合见后文。</p>
+          </div>
+        </div>
+        <div class="icon green">🔤</div>
+      </div>
+
+      <div class="keyboard-wrap" aria-label="QWERTY 音标键盘映射图">
+        <div class="keyboard">
+          <div class="kbd-row top">
+            <div class="key vowel"><b>Q</b><span>ə</span></div>
+            <div class="key"><b>W</b><span>w</span></div>
+            <div class="key vowel"><b>E</b><span>e</span></div>
+            <div class="key"><b>R</b><span>r</span></div>
+            <div class="key"><b>T</b><span>t</span></div>
+            <div class="key"><b>Y</b><span>j</span></div>
+            <div class="key vowel"><b>U</b><span>ʌ</span></div>
+            <div class="key vowel"><b>I</b><span>ɪ</span></div>
+            <div class="key vowel"><b>O</b><span>ɒ</span></div>
+            <div class="key"><b>P</b><span>p</span></div>
+          </div>
+          <div class="kbd-row middle">
+            <div class="key vowel"><b>A</b><span>æ</span></div>
+            <div class="key"><b>S</b><span>s</span></div>
+            <div class="key"><b>D</b><span>d</span></div>
+            <div class="key"><b>F</b><span>f</span></div>
+            <div class="key"><b>G</b><span>g</span></div>
+            <div class="key"><b>H</b><span>h</span></div>
+            <div class="key special"><b>J</b><span>dʒ</span></div>
+            <div class="key"><b>K</b><span>k</span></div>
+            <div class="key"><b>L</b><span>l</span></div>
+          </div>
+          <div class="kbd-row bottom">
+            <div class="key"><b>Z</b><span>z</span></div>
+            <div class="key special"><b>X</b><span>ʃ</span></div>
+            <div class="key special"><b>C</b><span>tʃ</span></div>
+            <div class="key"><b>V</b><span>v</span></div>
+            <div class="key"><b>B</b><span>b</span></div>
+            <div class="key"><b>N</b><span>n</span></div>
+            <div class="key"><b>M</b><span>m</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-box">
+        <table aria-label="26 字母键基础映射表">
+          <thead><tr><th>键</th><th>输出</th><th>例词</th><th>键</th><th>输出</th><th>例词</th></tr></thead>
+          <tbody>
+            <tr><td><code>a</code></td><td class="ipa">æ</td><td class="word">cat</td><td><code>n</code></td><td class="ipa">n</td><td class="word">nose</td></tr>
+            <tr><td><code>b</code></td><td class="ipa">b</td><td class="word">bag</td><td><code>o</code></td><td class="ipa">ɒ</td><td class="word">hot</td></tr>
+            <tr><td><code>c</code></td><td class="ipa">tʃ</td><td class="word">chair</td><td><code>p</code></td><td class="ipa">p</td><td class="word">pen</td></tr>
+            <tr><td><code>d</code></td><td class="ipa">d</td><td class="word">dog</td><td><code>q</code></td><td class="ipa">ə</td><td class="word">about</td></tr>
+            <tr><td><code>e</code></td><td class="ipa">e</td><td class="word">bed</td><td><code>r</code></td><td class="ipa">r</td><td class="word">red</td></tr>
+            <tr><td><code>f</code></td><td class="ipa">f</td><td class="word">fish</td><td><code>s</code></td><td class="ipa">s</td><td class="word">sun</td></tr>
+            <tr><td><code>g</code></td><td class="ipa">g</td><td class="word">girl</td><td><code>t</code></td><td class="ipa">t</td><td class="word">tea</td></tr>
+            <tr><td><code>h</code></td><td class="ipa">h</td><td class="word">hat</td><td><code>u</code></td><td class="ipa">ʌ</td><td class="word">cup</td></tr>
+            <tr><td><code>i</code></td><td class="ipa">ɪ</td><td class="word">sit</td><td><code>v</code></td><td class="ipa">v</td><td class="word">van</td></tr>
+            <tr><td><code>j</code></td><td class="ipa">dʒ</td><td class="word">jump</td><td><code>w</code></td><td class="ipa">w</td><td class="word">we</td></tr>
+            <tr><td><code>k</code></td><td class="ipa">k</td><td class="word">key</td><td><code>x</code></td><td class="ipa">ʃ</td><td class="word">she</td></tr>
+            <tr><td><code>l</code></td><td class="ipa">l</td><td class="word">leg</td><td><code>y</code></td><td class="ipa">j</td><td class="word">yes</td></tr>
+            <tr><td><code>m</code></td><td class="ipa">m</td><td class="word">man</td><td><code>z</code></td><td class="ipa">z</td><td class="word">zoo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="vowels">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num purple">3</span>
+          <div>
+            <h2>元音扩展码</h2>
+            <p class="hint">长元音多用双写或常见拼写记忆。</p>
+          </div>
+        </div>
+        <div class="icon purple">🎵</div>
+      </div>
+
+      <div class="chip-grid">
+        <div class="chip"><code>i</code><span class="out">ɪ</span><small>sit</small></div>
+        <div class="chip"><code>ii</code><span class="out">iː</span><small>see</small></div>
+        <div class="chip"><code>e</code><span class="out">e</span><small>bed</small></div>
+        <div class="chip"><code>a</code><span class="out">æ</span><small>cat</small></div>
+        <div class="chip"><code>u</code><span class="out">ʌ</span><small>cup</small></div>
+        <div class="chip"><code>aa</code><span class="out">ɑː</span><small>father</small></div>
+        <div class="chip"><code>o</code><span class="out">ɒ</span><small>hot</small></div>
+        <div class="chip"><code>aw</code><span class="out">ɔː</span><small>saw</small></div>
+        <div class="chip"><code>oo</code><span class="out">ʊ</span><small>book</small></div>
+        <div class="chip"><code>uu</code><span class="out">uː</span><small>blue</small></div>
+        <div class="chip"><code>er</code><span class="out">ɜː</span><small>bird</small></div>
+        <div class="chip"><code>q</code><span class="out">ə</span><small>about</small></div>
+      </div>
+    </section>
+
+    <section class="card" id="diphthongs">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num blue">4</span>
+          <div>
+            <h2>双元音码表</h2>
+            <p class="hint">用接近英语拼写或读音的双字母组合输入。</p>
+          </div>
+        </div>
+        <div class="icon blue">〰️</div>
+      </div>
+
+      <div class="chip-grid">
+        <div class="chip"><code>ei</code><span class="out">eɪ</span><small>day</small></div>
+        <div class="chip"><code>ai</code><span class="out">aɪ</span><small>my</small></div>
+        <div class="chip"><code>oi</code><span class="out">ɔɪ</span><small>boy</small></div>
+        <div class="chip"><code>au</code><span class="out">aʊ</span><small>now</small></div>
+        <div class="chip"><code>ou</code><span class="out">əʊ</span><small>go</small></div>
+        <div class="chip"><code>ia</code><span class="out">ɪə</span><small>near</small></div>
+        <div class="chip"><code>ea</code><span class="out">eə</span><small>hair</small></div>
+        <div class="chip"><code>ua</code><span class="out">ʊə</span><small>tour</small></div>
+      </div>
+    </section>
+
+    <section class="card" id="consonants">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num green">5</span>
+          <div>
+            <h2>辅音扩展码</h2>
+            <p class="hint">th、dh、sh、zh、ng、ch 等组合按最长匹配优先。</p>
+          </div>
+        </div>
+        <div class="icon green">🗣️</div>
+      </div>
+
+      <div class="chip-grid">
+        <div class="chip"><code>th</code><span class="out">θ</span><small>thin</small></div>
+        <div class="chip"><code>dh</code><span class="out">ð</span><small>this</small></div>
+        <div class="chip"><code>sh</code><span class="out">ʃ</span><small>she</small></div>
+        <div class="chip"><code>x</code><span class="out">ʃ</span><small>she</small></div>
+        <div class="chip"><code>zh</code><span class="out">ʒ</span><small>vision</small></div>
+        <div class="chip"><code>ng</code><span class="out">ŋ</span><small>sing</small></div>
+        <div class="chip"><code>ch</code><span class="out">tʃ</span><small>chair</small></div>
+        <div class="chip"><code>c</code><span class="out">tʃ</span><small>chair</small></div>
+        <div class="chip"><code>j</code><span class="out">dʒ</span><small>jump</small></div>
+        <div class="chip"><code>y</code><span class="out">j</span><small>yes</small></div>
+      </div>
+    </section>
+
+    <section class="card" id="demo">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num orange">6</span>
+          <div>
+            <h2>实时转换演示</h2>
+            <p class="hint">输入字母码，下面会按最长匹配规则转换为 IPA。</p>
+          </div>
+        </div>
+        <div class="icon orange">⚡</div>
+      </div>
+
+      <div class="demo-panel">
+        <label for="demoInput">输入码</label>
+        <textarea id="demoInput" spellcheck="false">thin dhis faadhq shii chea jump qbaut</textarea>
+        <div class="result" id="demoResult" aria-live="polite"></div>
+        <div class="demo-actions">
+          <button class="btn" type="button" data-sample="sii sit bed kat kup faadhq">试试单词</button>
+          <button class="btn secondary" type="button" data-sample="thin dhis shii vizhqn ng c j">试试辅音</button>
+          <button class="btn secondary" type="button" data-sample="dei mai boi nau gou nia hea tua">试试双元音</button>
+        </div>
+      </div>
+
+      <div class="example-list" style="margin-top:12px;">
+        <div class="example"><span class="src">thin</span><span class="arrow">→</span><span class="dest">θɪn</span></div>
+        <div class="example"><span class="src">faadhq</span><span class="arrow">→</span><span class="dest">fɑːðə</span></div>
+        <div class="example"><span class="src">q-baut</span><span class="arrow">→</span><span class="dest">ə-baʊt</span></div>
+        <div class="example"><span class="src">xii / shii</span><span class="arrow">→</span><span class="dest">ʃiː</span></div>
+      </div>
+    </section>
+
+    <section class="card" id="rules">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num purple">7</span>
+          <div>
+            <h2>输入法实现规则</h2>
+            <p class="hint">核心算法：最长匹配优先。</p>
+          </div>
+        </div>
+        <div class="icon purple">🧩</div>
+      </div>
+
+      <div class="flow">
+        <div class="flow-step"><span class="bubble">1</span><div><strong>输入区保留字母码</strong><p>用户输入 faadhq，编辑区仍显示原始字母码，避免中途替换造成困扰。</p></div></div>
+        <div class="flow-step"><span class="bubble">2</span><div><strong>候选区显示 IPA</strong><p>候选栏显示 fɑːðə；用户按空格、回车或点选候选后上屏。</p></div></div>
+        <div class="flow-step"><span class="bubble">3</span><div><strong>优先匹配长码</strong><p>th 优先于 t，ii 优先于 i，ng 优先于 n，避免错误拆分。</p></div></div>
+        <div class="flow-step"><span class="bubble">4</span><div><strong>支持斜杠自动包装</strong><p>可以提供开关：上屏时自动输出 /fɑːðə/，或只输出 fɑːðə。</p></div></div>
+      </div>
+
+      <p class="note">优先级示例：thin 应解析为 th + i + n，输出 θɪn；不能解析为 t + h + i + n。</p>
+    </section>
+
+    <section class="card" id="map">
+      <div class="section-head">
+        <div class="section-title">
+          <span class="num blue">8</span>
+          <div>
+            <h2>推荐最终码表</h2>
+            <p class="hint">可直接作为程序映射表或输入法词库基础。</p>
+          </div>
+        </div>
+        <div class="icon blue">📄</div>
+      </div>
+
+      <pre class="code-block" aria-label="IPA 输入法码表">aa ɑː
+aw ɔː
+ii iː
+oo ʊ
+uu uː
+er ɜː
+ei eɪ
+ai aɪ
+oi ɔɪ
+au aʊ
+ou əʊ
+ia ɪə
+ea eə
+ua ʊə
+th θ
+dh ð
+sh ʃ
+zh ʒ
+ng ŋ
+ch tʃ
+a æ
+b b
+c tʃ
+d d
+e e
+f f
+g g
+h h
+i ɪ
+j dʒ
+k k
+l l
+m m
+n n
+o ɒ
+p p
+q ə
+r r
+s s
+t t
+u ʌ
+v v
+w w
+x ʃ
+y j
+z z</pre>
+    </section>
+
+    <footer class="footer">
+      英语 IPA 音标输入法说明文档<br />
+      建议用于 App 帮助页、输入法设置页、产品原型或移动端预览。
+    </footer>
+  </main>
+
+  <script>
+    const ipaMap = {
+      "aa":"ɑː", "aw":"ɔː", "ii":"iː", "oo":"ʊ", "uu":"uː", "er":"ɜː",
+      "ei":"eɪ", "ai":"aɪ", "oi":"ɔɪ", "au":"aʊ", "ou":"əʊ", "ia":"ɪə", "ea":"eə", "ua":"ʊə",
+      "th":"θ", "dh":"ð", "sh":"ʃ", "zh":"ʒ", "ng":"ŋ", "ch":"tʃ",
+      "a":"æ", "b":"b", "c":"tʃ", "d":"d", "e":"e", "f":"f", "g":"g", "h":"h", "i":"ɪ", "j":"dʒ", "k":"k", "l":"l", "m":"m", "n":"n", "o":"ɒ", "p":"p", "q":"ə", "r":"r", "s":"s", "t":"t", "u":"ʌ", "v":"v", "w":"w", "x":"ʃ", "y":"j", "z":"z"
+    };
+    const keys = Object.keys(ipaMap).sort((a,b) => b.length - a.length);
+
+    function convertToIPA(input){
+      let s = input.toLowerCase();
+      let out = "";
+      let i = 0;
+      while(i < s.length){
+        let matched = false;
+        for(const key of keys){
+          if(s.startsWith(key, i)){
+            out += ipaMap[key];
+            i += key.length;
+            matched = true;
+            break;
+          }
+        }
+        if(!matched){
+          out += s[i];
+          i++;
+        }
+      }
+      return out;
+    }
+
+    const input = document.getElementById('demoInput');
+    const result = document.getElementById('demoResult');
+    function updateDemo(){ result.textContent = convertToIPA(input.value); }
+    input.addEventListener('input', updateDemo);
+    document.querySelectorAll('[data-sample]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        input.value = btn.getAttribute('data-sample');
+        updateDemo();
+        input.focus();
+      });
+    });
+    updateDemo();
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Xcode user data
+*.xcuserstate
+xcuserdata/
+
+# Build artifacts
+DerivedData/
+build/
+Release/
+*.ipa
+*.xcarchive
+
+# Signing and secrets
+notpush/
+*.mobileprovision
+*.p12
+*.cer
+
+# Local archives
+*.zip
+
+# Optional local design scratch
+design/
