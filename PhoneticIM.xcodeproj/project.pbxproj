@@ -25,11 +25,13 @@
 		A31DA7E13284A0D180038CD7 /* InputMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834AF513F93644AB33A59E36 /* InputMode.swift */; };
 		AAF2B14A7248638BD7A7BA18 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9CF45573023568B87BEBD9 /* KeyboardView.swift */; };
 		BEC75D476DA8E0FD4BB8D344 /* InputMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834AF513F93644AB33A59E36 /* InputMode.swift */; };
+		C42A6E94E011A3FB17BCF4B4 /* KeyboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A240F95BAC89557470099C /* KeyboardModels.swift */; };
 		CCA3C05AE99CD009FFDA8C97 /* GuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DAC475898FC49F8ABE519A /* GuideViewController.swift */; };
 		D3F1265E2E123EFD2A0161DA /* IPAKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8252C29877E4D1A5B28274DB /* IPAKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DA821ADE914C948F3F2BD933 /* DictionaryCacheStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EDBDF50100B756AB64778A1 /* DictionaryCacheStore.swift */; };
 		E61A313C8716FFF95D80974A /* en_UK.txt in Resources */ = {isa = PBXBuildFile; fileRef = EBF7553EB3EADD72B623AE40 /* en_UK.txt */; };
 		E7541E41D1BA376D6359A736 /* KeyboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA270FD27997B213B2AC36B /* KeyboardSettings.swift */; };
+		F5A7A6C36D4B750048BF5D22 /* KeyboardDesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267D1EB8F81846C8934FF5A9 /* KeyboardDesignTokens.swift */; };
 		F786EF0C95295C0B63418DAC /* IPAComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19853BD6C8EECC106FB8BF7E /* IPAComposer.swift */; };
 		FC6773FA48665F8DC2461791 /* IPATransliterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C81CDBD29CD2CCEAA432 /* IPATransliterator.swift */; };
 		FD4D1FC882DCEFC03226865F /* BuiltinMiniLexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4A8FFFC09A8FCEF58E8D0C /* BuiltinMiniLexicon.swift */; };
@@ -71,6 +73,7 @@
 		14949DC5EEE16786D97A9133 /* PhoneticIMTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PhoneticIMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		19853BD6C8EECC106FB8BF7E /* IPAComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAComposer.swift; sourceTree = "<group>"; };
 		1EDBDF50100B756AB64778A1 /* DictionaryCacheStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryCacheStore.swift; sourceTree = "<group>"; };
+		267D1EB8F81846C8934FF5A9 /* KeyboardDesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDesignTokens.swift; sourceTree = "<group>"; };
 		29885063C64C69B8528D8A04 /* IPATransliteratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPATransliteratorTests.swift; sourceTree = "<group>"; };
 		30165549746131ADA16503D0 /* PhoneticIM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PhoneticIM.entitlements; sourceTree = "<group>"; };
 		39BE2E8846ACBE1753598B4B /* user-guide.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "user-guide.html"; sourceTree = "<group>"; };
@@ -88,6 +91,7 @@
 		8E9CF45573023568B87BEBD9 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		C6C89E02D7C6FA3B3857AAFD /* PhoneticIM.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhoneticIM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D672A72BF6813BDBAD4CDBF0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		E2A240F95BAC89557470099C /* KeyboardModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardModels.swift; sourceTree = "<group>"; };
 		EBF7553EB3EADD72B623AE40 /* en_UK.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = en_UK.txt; sourceTree = "<group>"; };
 		F72D1D2847C5F92D60FE8E04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FD3DA29D4BC40AD124434018 /* IPAKeyMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAKeyMap.swift; sourceTree = "<group>"; };
@@ -124,6 +128,8 @@
 				EBF7553EB3EADD72B623AE40 /* en_UK.txt */,
 				F72D1D2847C5F92D60FE8E04 /* Info.plist */,
 				0383F9C9BED237CD382ACD58 /* IPAKeyboard.entitlements */,
+				267D1EB8F81846C8934FF5A9 /* KeyboardDesignTokens.swift */,
+				E2A240F95BAC89557470099C /* KeyboardModels.swift */,
 				8E9CF45573023568B87BEBD9 /* KeyboardView.swift */,
 				52C536F64A4578D71612A840 /* KeyboardViewController.swift */,
 			);
@@ -307,6 +313,8 @@
 				1B4702C71E0CAF8DB726D09A /* IPAKeyMap.swift in Sources */,
 				FC6773FA48665F8DC2461791 /* IPATransliterator.swift in Sources */,
 				BEC75D476DA8E0FD4BB8D344 /* InputMode.swift in Sources */,
+				F5A7A6C36D4B750048BF5D22 /* KeyboardDesignTokens.swift in Sources */,
+				C42A6E94E011A3FB17BCF4B4 /* KeyboardModels.swift in Sources */,
 				E7541E41D1BA376D6359A736 /* KeyboardSettings.swift in Sources */,
 				AAF2B14A7248638BD7A7BA18 /* KeyboardView.swift in Sources */,
 				4D28F162BAAD7B1829521733 /* KeyboardViewController.swift in Sources */,

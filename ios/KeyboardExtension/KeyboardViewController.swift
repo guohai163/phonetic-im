@@ -44,9 +44,7 @@ final class KeyboardViewController: UIInputViewController {
 
     private func apply(update: ComposerUpdate) {
         if update.backspaceCount > 0 {
-            (0..<update.backspaceCount).forEach { _ in
-                textDocumentProxy.deleteBackward()
-            }
+            (0..<update.backspaceCount).forEach { _ in textDocumentProxy.deleteBackward() }
         }
 
         if let text = update.textToInsert, !text.isEmpty {
@@ -64,7 +62,6 @@ final class KeyboardViewController: UIInputViewController {
             preview: composer.convertedPreview
         )
     }
-
 
     private func handleDictionaryLookupIfNeeded() {
         guard composer.mode == .dictionary else { return }
@@ -108,7 +105,7 @@ final class KeyboardViewController: UIInputViewController {
         case .done:
             action = .done
         case .default:
-            action = .none
+            action = .return
         default:
             action = .return
         }
@@ -117,7 +114,6 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     private func performContextAction() {
-        // Commit pending compose buffer first, then trigger host action by newline.
         let commit = composer.commitCurrentBuffer()
         apply(update: commit)
         textDocumentProxy.insertText("\n")
@@ -178,5 +174,13 @@ extension KeyboardViewController: KeyboardViewDelegate {
 
     func keyboardViewDidTapContextAction() {
         performContextAction()
+    }
+
+    func keyboardViewDidTapQuickIPA(_ ipa: String) {
+        textDocumentProxy.insertText(ipa)
+    }
+
+    func keyboardViewDidSelectAlternative(_ value: String) {
+        textDocumentProxy.insertText(value)
     }
 }
