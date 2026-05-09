@@ -19,6 +19,7 @@
 		4D28F162BAAD7B1829521733 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C536F64A4578D71612A840 /* KeyboardViewController.swift */; };
 		545A726E7B055522593349F8 /* DictionaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B357CB22F3C334A6D818A2C /* DictionaryService.swift */; };
 		5616AD19EA21EC9C8D92E275 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A7F359EF0C3F68D1BDD1531 /* Assets.xcassets */; };
+		7E2D5A41C9F34B4FA13E8D21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E2D5A40C9F34B4FA13E8D21 /* Assets.xcassets */; };
 		80C41A28A927AD30F3EBFEDA /* DictionaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B357CB22F3C334A6D818A2C /* DictionaryService.swift */; };
 		817988E2F9A46047DB1E30DB /* IPAComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19853BD6C8EECC106FB8BF7E /* IPAComposer.swift */; };
 		9A7E5E17FB178BD96C311F52 /* BuiltinMiniLexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4A8FFFC09A8FCEF58E8D0C /* BuiltinMiniLexicon.swift */; };
@@ -78,6 +79,7 @@
 		30165549746131ADA16503D0 /* PhoneticIM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PhoneticIM.entitlements; sourceTree = "<group>"; };
 		39BE2E8846ACBE1753598B4B /* user-guide.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "user-guide.html"; sourceTree = "<group>"; };
 		3A7F359EF0C3F68D1BDD1531 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7E2D5A40C9F34B4FA13E8D21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		52C536F64A4578D71612A840 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		5B357CB22F3C334A6D818A2C /* DictionaryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryService.swift; sourceTree = "<group>"; };
 		5DA270FD27997B213B2AC36B /* KeyboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardSettings.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 		2B3A80038687BF50806B6CF2 /* KeyboardExtension */ = {
 			isa = PBXGroup;
 			children = (
+				7E2D5A40C9F34B4FA13E8D21 /* Assets.xcassets */,
 				EBF7553EB3EADD72B623AE40 /* en_UK.txt */,
 				F72D1D2847C5F92D60FE8E04 /* Info.plist */,
 				0383F9C9BED237CD382ACD58 /* IPAKeyboard.entitlements */,
@@ -286,6 +289,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E2D5A41C9F34B4FA13E8D21 /* Assets.xcassets in Resources */,
 				E61A313C8716FFF95D80974A /* en_UK.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -57,6 +57,7 @@ targets:
       - path: ios/KeyboardExtension
     resources:
       - path: ios/KeyboardExtension/en_UK.txt
+      - path: ios/KeyboardExtension/Assets.xcassets
     info:
       path: ios/KeyboardExtension/Info.plist
       properties:
