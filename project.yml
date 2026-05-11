@@ -27,12 +27,21 @@ targets:
       - path: App
       - path: ios/IPAKeyboardCore
     resources:
+      - path: App/en.lproj
+      - path: App/zh.lproj
+      - path: App/zh-Hans.lproj
+      - path: App/zh-Hant.lproj
       - path: App/user-guide.html
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: PhoneticIM
-        CFBundleName: PhoneticIM
+        CFBundleDisplayName: ÆKey
+        CFBundleLocalizations:
+          - en
+          - zh
+          - zh-Hans
+          - zh-Hant
+        CFBundleName: ÆKey
         UILaunchScreen: {}
     settings:
       base:
@@ -56,13 +65,23 @@ targets:
       - path: ios/IPAKeyboardCore
       - path: ios/KeyboardExtension
     resources:
+      - path: ios/KeyboardExtension/en.lproj
+      - path: ios/KeyboardExtension/zh.lproj
+      - path: ios/KeyboardExtension/zh-Hans.lproj
+      - path: ios/KeyboardExtension/zh-Hant.lproj
+      - path: ios/KeyboardExtension/en_US.txt
       - path: ios/KeyboardExtension/en_UK.txt
       - path: ios/KeyboardExtension/Assets.xcassets
     info:
       path: ios/KeyboardExtension/Info.plist
       properties:
-        CFBundleDisplayName: IPA Keyboard
-        CFBundleName: IPAKeyboard
+        CFBundleDisplayName: ÆKey
+        CFBundleLocalizations:
+          - en
+          - zh
+          - zh-Hans
+          - zh-Hant
+        CFBundleName: ÆKey
         NSExtension:
           NSExtensionAttributes:
             IsASCIICapable: false

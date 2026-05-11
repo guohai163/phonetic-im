@@ -2,6 +2,7 @@ import Foundation
 
 enum KeyboardSettings {
     private static let inputModeKey = "ipa.input.mode"
+    private static let dictionaryVariantKey = "ipa.dictionary.variant"
     private static let dictVersionKey = "ipa.dict.version"
     private static let dictUpdatedAtKey = "ipa.dict.updated_at"
     private static let dictCachedKey = "ipa.dict.cached"
@@ -19,6 +20,18 @@ enum KeyboardSettings {
 
     static func saveInputMode(_ mode: InputMode) {
         defaults.set(mode.rawValue, forKey: inputModeKey)
+    }
+
+    static func loadDictionaryVariant() -> DictionaryVariant {
+        guard let raw = defaults.string(forKey: dictionaryVariantKey),
+              let variant = DictionaryVariant(rawValue: raw) else {
+            return .enUK
+        }
+        return variant
+    }
+
+    static func saveDictionaryVariant(_ variant: DictionaryVariant) {
+        defaults.set(variant.rawValue, forKey: dictionaryVariantKey)
     }
 
     static func loadDictionaryMeta() -> DictionaryMeta {

@@ -10,12 +10,16 @@ final class KeyboardViewController: UIInputViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupKeyboardView()
+        keyboardView.updateDictionaryVariant(dictionaryService.currentVariant)
         refreshStatusAndCandidates([])
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         composer.setMode(KeyboardSettings.loadInputMode())
+        dictionaryService.switchVariant(KeyboardSettings.loadDictionaryVariant())
+        keyboardView.updateDictionaryVariant(dictionaryService.currentVariant)
+        keyboardView.hideDictionarySelector()
         refreshStatusAndCandidates([])
         updateContextAction()
     }
@@ -60,6 +64,7 @@ final class KeyboardViewController: UIInputViewController {
     /// 将当前引擎状态同步到界面。
     private func refreshStatusAndCandidates(_ candidates: [String]) {
         keyboardView.updateCandidates(candidates)
+        keyboardView.updateDictionaryVariant(dictionaryService.currentVariant)
         keyboardView.updateStatus(
             mode: composer.mode,
             composeBuffer: composer.composeBuffer,
@@ -87,6 +92,7 @@ final class KeyboardViewController: UIInputViewController {
             }
             await MainActor.run {
                 self.keyboardView.updateCandidates(candidates)
+                self.keyboardView.updateDictionaryVariant(self.dictionaryService.currentVariant)
                 self.keyboardView.updateStatus(
                     mode: self.composer.mode,
                     composeBuffer: self.composer.composeBuffer,
@@ -137,9 +143,28 @@ final class KeyboardViewController: UIInputViewController {
     private func firstDictionaryCandidateIPA() -> String {
         if let first = keyboardView.currentCandidates.first {
             let ipa = first.components(separatedBy: " [").first ?? first
-            if !ipa.hasPrefix("(") { return ipa }   // skip error placeholders like "(offline/miss)"
+            if !ipa.hasPrefix("(") { return ipa }
         }
         return composer.composeBuffer
+    }
+
+    private func commitPreviewResult() {
+        guard !composer.composeBuffer.isEmpty else { return }
+        let value: String
+        if composer.mode == .dictionary {
+            value = firstDictionaryCandidateIPA()
+        } else if !composer.convertedPreview.isEmpty {
+            value = composer.convertedPreview
+        } else {
+            apply(update: composer.commitCurrentBuffer())
+            return
+        }
+        apply(update: composer.commitText(value))
+    }
+
+    private func commitPreviewCode() {
+        guard !composer.composeBuffer.isEmpty else { return }
+        apply(update: composer.commitRawBuffer())
     }
 }
 
@@ -160,6 +185,7 @@ extension KeyboardViewController: KeyboardViewDelegate {
 
     func keyboardViewDidTapBackspace() {
         apply(update: composer.applyBackspace())
+        handleDictionaryLookupIfNeeded()
     }
 
     func keyboardViewDidTapSpace() {
@@ -201,5 +227,37 @@ extension KeyboardViewController: KeyboardViewDelegate {
 
     func keyboardViewDidSelectAlternative(_ value: String) {
         textDocumentProxy.insertText(value)
+    }
+
+    func keyboardViewDidTapLogo() {
+        keyboardView.showDictionarySelector()
+    }
+
+    func keyboardViewDidTapPreviewResult() {
+        commitPreviewResult()
+    }
+
+    func keyboardViewDidTapPreviewCode() {
+        commitPreviewCode()
+    }
+
+    func keyboardViewDidTapNextKeyboard() {
+        advanceToNextInputMode()
+    }
+
+    func keyboardViewDidCancelDictionarySelection() {
+        keyboardView.hideDictionarySelector()
+        keyboardView.updateDictionaryVariant(dictionaryService.currentVariant)
+    }
+
+    func keyboardViewDidConfirmDictionarySelection(_ variant: DictionaryVariant) {
+        dictionaryService.switchVariant(variant)
+        keyboardView.hideDictionarySelector()
+        keyboardView.updateDictionaryVariant(dictionaryService.currentVariant)
+        if composer.mode == .dictionary, composer.composeBuffer.count >= 2 {
+            handleDictionaryLookupIfNeeded()
+        } else {
+            refreshStatusAndCandidates(keyboardView.currentCandidates)
+        }
     }
 }

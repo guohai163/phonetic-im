@@ -1,11 +1,11 @@
 import Foundation
 
 enum BuiltinMiniLexicon {
-    static func load() -> [String: [String]] {
+    static func load(variant: DictionaryVariant) -> [String: [String]] {
         let bundle = Bundle.main
         let candidateURLs: [URL?] = [
-            bundle.url(forResource: "en_UK", withExtension: "txt"),
-            bundle.url(forResource: "en_UK", withExtension: "txt", subdirectory: "data")
+            bundle.url(forResource: variant.rawValue, withExtension: "txt"),
+            bundle.url(forResource: variant.rawValue, withExtension: "txt", subdirectory: "data")
         ]
 
         guard let url = candidateURLs.compactMap({ $0 }).first,

@@ -13,19 +13,23 @@
 		1C309AB6BDF253C0E7D220DA /* user-guide.html in Resources */ = {isa = PBXBuildFile; fileRef = 39BE2E8846ACBE1753598B4B /* user-guide.html */; };
 		23A8B8C9F7988AC57FF605E3 /* KeyboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA270FD27997B213B2AC36B /* KeyboardSettings.swift */; };
 		23FD747495A804ACFF384B54 /* DictionaryCacheStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EDBDF50100B756AB64778A1 /* DictionaryCacheStore.swift */; };
+		3241E92645E7C89F1EF1D7F3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9A19A808FBED131532DDD6F /* InfoPlist.strings */; };
 		383A3B502916B0588A47EEDE /* IPAKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3DA29D4BC40AD124434018 /* IPAKeyMap.swift */; };
 		397741C5B905C26AB1EE4E88 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D672A72BF6813BDBAD4CDBF0 /* SceneDelegate.swift */; };
 		3A31BBC1450FEA711EA4BB70 /* IPATransliterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C81CDBD29CD2CCEAA432 /* IPATransliterator.swift */; };
 		4D28F162BAAD7B1829521733 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C536F64A4578D71612A840 /* KeyboardViewController.swift */; };
 		545A726E7B055522593349F8 /* DictionaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B357CB22F3C334A6D818A2C /* DictionaryService.swift */; };
 		5616AD19EA21EC9C8D92E275 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A7F359EF0C3F68D1BDD1531 /* Assets.xcassets */; };
+		74E3E151A28CA58F8FA79060 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 40043268E736B3D5ECE46A13 /* InfoPlist.strings */; };
 		80C41A28A927AD30F3EBFEDA /* DictionaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B357CB22F3C334A6D818A2C /* DictionaryService.swift */; };
 		817988E2F9A46047DB1E30DB /* IPAComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19853BD6C8EECC106FB8BF7E /* IPAComposer.swift */; };
+		8CDE7FC7BB420BC328F2B0E2 /* DictionaryVariantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BC9B3568601FD9BC959EDE /* DictionaryVariantTests.swift */; };
 		9A7E5E17FB178BD96C311F52 /* BuiltinMiniLexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4A8FFFC09A8FCEF58E8D0C /* BuiltinMiniLexicon.swift */; };
 		A31DA7E13284A0D180038CD7 /* InputMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834AF513F93644AB33A59E36 /* InputMode.swift */; };
 		AAF2B14A7248638BD7A7BA18 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9CF45573023568B87BEBD9 /* KeyboardView.swift */; };
 		AD2080EB428C0DEE2F05CB46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBD001F15D726E436B8C206F /* Assets.xcassets */; };
 		BEC75D476DA8E0FD4BB8D344 /* InputMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834AF513F93644AB33A59E36 /* InputMode.swift */; };
+		C047B66AB2695D18995E6C07 /* en_US.txt in Resources */ = {isa = PBXBuildFile; fileRef = B76968236A7DD7F483F07053 /* en_US.txt */; };
 		C42A6E94E011A3FB17BCF4B4 /* KeyboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A240F95BAC89557470099C /* KeyboardModels.swift */; };
 		CCA3C05AE99CD009FFDA8C97 /* GuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DAC475898FC49F8ABE519A /* GuideViewController.swift */; };
 		D3F1265E2E123EFD2A0161DA /* IPAKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8252C29877E4D1A5B28274DB /* IPAKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -76,12 +80,17 @@
 		1EDBDF50100B756AB64778A1 /* DictionaryCacheStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryCacheStore.swift; sourceTree = "<group>"; };
 		267D1EB8F81846C8934FF5A9 /* KeyboardDesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDesignTokens.swift; sourceTree = "<group>"; };
 		29885063C64C69B8528D8A04 /* IPATransliteratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPATransliteratorTests.swift; sourceTree = "<group>"; };
+		2B1E2985BC3F82FEF15FEFCB /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		2BE1950F479FAA467177C8DF /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2FFB5989DBBB0F15950E760A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		30165549746131ADA16503D0 /* PhoneticIM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PhoneticIM.entitlements; sourceTree = "<group>"; };
+		384E30B40CC88ADDE91F2DCD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		39BE2E8846ACBE1753598B4B /* user-guide.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "user-guide.html"; sourceTree = "<group>"; };
 		3A7F359EF0C3F68D1BDD1531 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		52C536F64A4578D71612A840 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		5B357CB22F3C334A6D818A2C /* DictionaryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryService.swift; sourceTree = "<group>"; };
 		5DA270FD27997B213B2AC36B /* KeyboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardSettings.swift; sourceTree = "<group>"; };
+		65BBC413299A70131B4682DE /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6710799A0477743B662CCF06 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7A56DDEAFB9022F8F4860ECE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8252C29877E4D1A5B28274DB /* IPAKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = IPAKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,12 +99,17 @@
 		8866C81CDBD29CD2CCEAA432 /* IPATransliterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPATransliterator.swift; sourceTree = "<group>"; };
 		8D4A8FFFC09A8FCEF58E8D0C /* BuiltinMiniLexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinMiniLexicon.swift; sourceTree = "<group>"; };
 		8E9CF45573023568B87BEBD9 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
+		B76968236A7DD7F483F07053 /* en_US.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = en_US.txt; sourceTree = "<group>"; };
+		C104A3A834A8F554602E4EDD /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C6C89E02D7C6FA3B3857AAFD /* PhoneticIM.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhoneticIM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD3E7AC4A483E2BAACF7DBB0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		D672A72BF6813BDBAD4CDBF0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		DBD001F15D726E436B8C206F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E2A240F95BAC89557470099C /* KeyboardModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardModels.swift; sourceTree = "<group>"; };
 		EBF7553EB3EADD72B623AE40 /* en_UK.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = en_UK.txt; sourceTree = "<group>"; };
+		F1BC9B3568601FD9BC959EDE /* DictionaryVariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryVariantTests.swift; sourceTree = "<group>"; };
 		F72D1D2847C5F92D60FE8E04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F7D0C5B2250DC03C8B7D99F9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD3DA29D4BC40AD124434018 /* IPAKeyMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAKeyMap.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,6 +124,7 @@
 				30165549746131ADA16503D0 /* PhoneticIM.entitlements */,
 				D672A72BF6813BDBAD4CDBF0 /* SceneDelegate.swift */,
 				39BE2E8846ACBE1753598B4B /* user-guide.html */,
+				E9A19A808FBED131532DDD6F /* InfoPlist.strings */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -129,12 +144,14 @@
 			children = (
 				DBD001F15D726E436B8C206F /* Assets.xcassets */,
 				EBF7553EB3EADD72B623AE40 /* en_UK.txt */,
+				B76968236A7DD7F483F07053 /* en_US.txt */,
 				F72D1D2847C5F92D60FE8E04 /* Info.plist */,
 				0383F9C9BED237CD382ACD58 /* IPAKeyboard.entitlements */,
 				267D1EB8F81846C8934FF5A9 /* KeyboardDesignTokens.swift */,
 				E2A240F95BAC89557470099C /* KeyboardModels.swift */,
 				8E9CF45573023568B87BEBD9 /* KeyboardView.swift */,
 				52C536F64A4578D71612A840 /* KeyboardViewController.swift */,
+				40043268E736B3D5ECE46A13 /* InfoPlist.strings */,
 			);
 			path = KeyboardExtension;
 			sourceTree = "<group>";
@@ -152,6 +169,7 @@
 		982263A48C21556E075955A7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F1BC9B3568601FD9BC959EDE /* DictionaryVariantTests.swift */,
 				29885063C64C69B8528D8A04 /* IPATransliteratorTests.swift */,
 			);
 			path = Tests;
@@ -269,6 +287,9 @@
 			knownRegions = (
 				Base,
 				en,
+				zh,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 1DFD33F3FD5754A0489ACE6B;
 			minimizedProjectReferenceProxies = 1;
@@ -290,7 +311,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD2080EB428C0DEE2F05CB46 /* Assets.xcassets in Resources */,
+				74E3E151A28CA58F8FA79060 /* InfoPlist.strings in Resources */,
 				E61A313C8716FFF95D80974A /* en_UK.txt in Resources */,
+				C047B66AB2695D18995E6C07 /* en_US.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,6 +322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5616AD19EA21EC9C8D92E275 /* Assets.xcassets in Resources */,
+				3241E92645E7C89F1EF1D7F3 /* InfoPlist.strings in Resources */,
 				1C309AB6BDF253C0E7D220DA /* user-guide.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -347,6 +371,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CDE7FC7BB420BC328F2B0E2 /* DictionaryVariantTests.swift in Sources */,
 				0C870A9863021F88A3073F52 /* IPATransliteratorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -365,6 +390,31 @@
 			targetProxy = 215EC66A33CA6D8293A5809C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		40043268E736B3D5ECE46A13 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F7D0C5B2250DC03C8B7D99F9 /* en */,
+				C104A3A834A8F554602E4EDD /* zh */,
+				2FFB5989DBBB0F15950E760A /* zh-Hans */,
+				CD3E7AC4A483E2BAACF7DBB0 /* zh-Hant */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E9A19A808FBED131532DDD6F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				384E30B40CC88ADDE91F2DCD /* en */,
+				2BE1950F479FAA467177C8DF /* zh */,
+				65BBC413299A70131B4682DE /* zh-Hans */,
+				2B1E2985BC3F82FEF15FEFCB /* zh-Hant */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		2558F3AA99081FBA2E39082D /* Debug */ = {

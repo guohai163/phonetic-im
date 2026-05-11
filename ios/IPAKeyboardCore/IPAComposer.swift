@@ -113,9 +113,20 @@ final class IPAComposer {
     }
 
     func tapCandidate(_ candidate: String) -> ComposerUpdate {
+        commitText(candidate)
+    }
+
+    func commitRawBuffer() -> ComposerUpdate {
+        commitText(composeBuffer)
+    }
+
+    func commitText(_ text: String) -> ComposerUpdate {
+        guard !text.isEmpty else {
+            return ComposerUpdate.empty(mode: mode)
+        }
         clearBuffer()
         return ComposerUpdate(
-            textToInsert: candidate,
+            textToInsert: text,
             backspaceCount: 0,
             candidates: [],
             composeBuffer: composeBuffer,

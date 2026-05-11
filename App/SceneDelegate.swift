@@ -15,7 +15,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         root.view.backgroundColor = .systemBackground
 
         let label = UILabel()
-        label.text = "PhoneticIM Installed"
+        let displayName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+        label.text = "\(displayName ?? "ÆKey") Installed"
         label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
 

@@ -1,5 +1,12 @@
 import Foundation
 
+enum DictionaryVariant: String, CaseIterable {
+    case enUK = "en_UK"
+    case enUS = "en_US"
+
+    var titleSuffix: String { rawValue }
+}
+
 struct DictEntry {
     let word: String
     let ipa: String
@@ -9,17 +16,33 @@ struct DictEntry {
 final class DictionaryService {
     static let shared = DictionaryService()
 
-    private let cacheStore = DictionaryCacheStore()
+    private let cacheStore: DictionaryCacheStore
+    private let builtinLoader: (DictionaryVariant) -> [String: [String]]
     private var cache: [String: [String]] = [:]
     private var builtin: [String: [String]] = [:]
+    private(set) var currentVariant: DictionaryVariant
 
-    private init() {
+    init(
+        cacheStore: DictionaryCacheStore = DictionaryCacheStore(),
+        initialVariant: DictionaryVariant = KeyboardSettings.loadDictionaryVariant(),
+        builtinLoader: @escaping (DictionaryVariant) -> [String: [String]] = BuiltinMiniLexicon.load
+    ) {
+        self.cacheStore = cacheStore
+        self.currentVariant = initialVariant
+        self.builtinLoader = builtinLoader
         cache = cacheStore.load()
-        builtin = BuiltinMiniLexicon.load()
+        builtin = builtinLoader(initialVariant)
     }
 
     func builtinCount() -> Int {
         builtin.count
+    }
+
+    func switchVariant(_ variant: DictionaryVariant) {
+        guard currentVariant != variant else { return }
+        currentVariant = variant
+        builtin = builtinLoader(variant)
+        KeyboardSettings.saveDictionaryVariant(variant)
     }
 
     func lookup(word: String) async -> [DictEntry] {

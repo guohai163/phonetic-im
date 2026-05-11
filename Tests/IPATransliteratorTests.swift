@@ -38,4 +38,28 @@ final class IPATransliteratorTests: XCTestCase {
         XCTAssertEqual(result2.committed, "")
         XCTAssertEqual(result2.pending, "t")
     }
+
+    func testComposerCanCommitRawBuffer() {
+        let composer = IPAComposer(mode: .candidate)
+        _ = composer.handleLetter("t")
+        _ = composer.handleLetter("h")
+
+        let update = composer.commitRawBuffer()
+
+        XCTAssertEqual(update.textToInsert, "th")
+        XCTAssertTrue(composer.composeBuffer.isEmpty)
+        XCTAssertTrue(composer.convertedPreview.isEmpty)
+    }
+
+    func testComposerCanCommitExplicitPreviewText() {
+        let composer = IPAComposer(mode: .candidate)
+        _ = composer.handleLetter("t")
+        _ = composer.handleLetter("h")
+
+        let update = composer.commitText("θ")
+
+        XCTAssertEqual(update.textToInsert, "θ")
+        XCTAssertTrue(composer.composeBuffer.isEmpty)
+        XCTAssertTrue(composer.convertedPreview.isEmpty)
+    }
 }
