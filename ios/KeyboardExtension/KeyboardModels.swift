@@ -63,4 +63,10 @@ enum KeyboardLayout {
         "n": ["n", "ŋ"],
         "j": ["dʒ", "j"]
     ]
+
+    /// 第三行左侧修饰符键（替代 Shift）的展示与候选。
+    static let modifierPrimary = "ˈ"
+    static let modifierSecondary = "ˌ ː"
+    static let modifierAlternatives = ["ˈ", "ˌ", "ː", ".", "/", "["]
+
 }

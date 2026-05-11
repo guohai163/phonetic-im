@@ -37,7 +37,7 @@ enum KeyboardDesignTokens {
 
     /// 布局与控件尺寸常量。
     enum Metrics {
-        static let keyboardHeight: CGFloat = 302
+        static let keyboardHeight: CGFloat = 288
         static let horizontalPadding: CGFloat = 4
         static let verticalPadding: CGFloat = 6
         static let verticalSpacing: CGFloat = 8
@@ -48,10 +48,10 @@ enum KeyboardDesignTokens {
         static let keyCorner: CGFloat = 6
         static let previewHeight: CGFloat = 68
 
-        static let previewLogoSize: CGFloat = 50
+        static let previewLogoSize: CGFloat = 40
         static let previewLogoCorner: CGFloat = 13
-        static let previewPillWidth: CGFloat = 72
-        static let previewPillHeight: CGFloat = 40
+        static let previewPillWidth: CGFloat = 62
+        static let previewPillHeight: CGFloat = 34
         static let sideFunctionKeyWidth: CGFloat = 44
         static let bottomSmallKeyWidth: CGFloat = 56
         static let bottomActionWidth: CGFloat = 96

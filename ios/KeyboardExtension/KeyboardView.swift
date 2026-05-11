@@ -11,6 +11,7 @@ protocol KeyboardViewDelegate: AnyObject {
     func keyboardViewDidSwitchFeature()
     func keyboardViewDidToggleSymbolPanel()
     func keyboardViewDidTapContextAction()
+    func keyboardViewDidTapModifier(_ value: String)
 
     func keyboardViewDidSelectAlternative(_ value: String)
 }
@@ -167,6 +168,7 @@ final class KeyboardView: UIView {
         private let overlay = UIView()
         var onTap: (() -> Void)?
         var onLongPress: ((KeyboardKeyButton) -> Void)?
+        var onLongPressStateChanged: ((KeyboardKeyButton, UILongPressGestureRecognizer) -> Void)?
 
         init(key: KeyModel, isDark: Bool) {
             self.key = key
@@ -251,8 +253,11 @@ final class KeyboardView: UIView {
         @objc private func tapped() { onTap?() }
 
         @objc private func handleLongPress(_ gr: UILongPressGestureRecognizer) {
-            guard gr.state == .began, !key.alternatives.isEmpty else { return }
-            onLongPress?(self)
+            guard !key.alternatives.isEmpty else { return }
+            if gr.state == .began {
+                onLongPress?(self)
+            }
+            onLongPressStateChanged?(self, gr)
         }
     }
 
@@ -287,6 +292,11 @@ final class KeyboardView: UIView {
     private let actionButton = UIButton(type: .system)
 
     private var alternativeOverlay: UIView?
+    private var alternativeOptionButtons: [UIButton] = []
+    private var alternativeOptionValues: [String] = []
+    private var highlightedAlternativeIndex: Int?
+    private var isAlternativeTrackingActive = false
+    private var isModifierAlternativeTracking = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -398,7 +408,6 @@ final class KeyboardView: UIView {
         modePillButton.addAction(UIAction { [weak self] _ in
             self?.delegate?.keyboardViewDidSwitchFeature()
         }, for: .touchUpInside)
-
         let resultCol = UIStackView(arrangedSubviews: [ipaResultLabel, ipaResultTitleLabel])
         resultCol.axis = .vertical
         resultCol.spacing = 3
@@ -501,6 +510,7 @@ final class KeyboardView: UIView {
             rowContainer.axis = .horizontal
             rowContainer.alignment = .fill
             rowContainer.spacing = 0
+            rowContainer.heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.keyHeight).isActive = true
 
             let leadingPad = UIView()
             let trailingPad = UIView()
@@ -517,9 +527,9 @@ final class KeyboardView: UIView {
             var characterButtons: [UIView] = []
 
             if currentPanel == .letters, index == 2 {
-                let shift = makeIconButton(systemName: "shift", style: .standard)
-                shift.widthAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.sideFunctionKeyWidth).isActive = true
-                rowStack.addArrangedSubview(shift)
+                let modifier = makeModifierKey()
+                modifier.widthAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.sideFunctionKeyWidth).isActive = true
+                rowStack.addArrangedSubview(modifier)
             }
 
             row.forEach { key in
@@ -612,8 +622,11 @@ final class KeyboardView: UIView {
     }
 
     /// 在长按按键上方弹出替代音标面板。
-    private func showAlternatives(from source: KeyboardKeyButton) {
+    private func showAlternatives(from source: KeyboardKeyButton, trackingMode: Bool = false) {
         alternativeOverlay?.removeFromSuperview()
+        alternativeOptionButtons = []
+        alternativeOptionValues = source.key.alternatives
+        highlightedAlternativeIndex = nil
 
         let card = UIView()
         card.backgroundColor = traitCollection.userInterfaceStyle == .dark ? KeyboardDesignTokens.Palette.previewCardDark : .white
@@ -633,11 +646,15 @@ final class KeyboardView: UIView {
         source.key.alternatives.forEach { alt in
             let button = makeFunctionButton(title: alt, style: .quick)
             button.widthAnchor.constraint(equalToConstant: 46).isActive = true
-            button.addAction(UIAction { [weak self] _ in
-                self?.alternativeOverlay?.removeFromSuperview()
-                self?.delegate?.keyboardViewDidSelectAlternative(alt)
-            }, for: .touchUpInside)
+            button.isUserInteractionEnabled = !trackingMode
+            if !trackingMode {
+                button.addAction(UIAction { [weak self] _ in
+                    self?.hideAlternativeOverlay()
+                    self?.delegate?.keyboardViewDidSelectAlternative(alt)
+                }, for: .touchUpInside)
+            }
             row.addArrangedSubview(button)
+            alternativeOptionButtons.append(button)
         }
 
         addSubview(card)
@@ -661,12 +678,136 @@ final class KeyboardView: UIView {
         alternativeOverlay = card
     }
 
+    private func hideAlternativeOverlay() {
+        alternativeOverlay?.removeFromSuperview()
+        alternativeOverlay = nil
+        alternativeOptionButtons = []
+        alternativeOptionValues = []
+        highlightedAlternativeIndex = nil
+        isAlternativeTrackingActive = false
+        isModifierAlternativeTracking = false
+    }
+
+    private func beginAlternativeTracking(from source: KeyboardKeyButton) {
+        showAlternatives(from: source, trackingMode: true)
+        isAlternativeTrackingActive = true
+        isModifierAlternativeTracking = true
+    }
+
+    private func updateAlternativeTracking(location: CGPoint) {
+        guard isAlternativeTrackingActive else { return }
+        var newIndex: Int?
+        for (index, button) in alternativeOptionButtons.enumerated() {
+            let point = button.convert(location, from: self)
+            if button.bounds.contains(point) {
+                newIndex = index
+                break
+            }
+        }
+        guard newIndex != highlightedAlternativeIndex else { return }
+        setHighlightedAlternativeIndex(newIndex)
+    }
+
+    private func endAlternativeTracking(commit: Bool) {
+        let valueToCommit: String?
+        if commit, let idx = highlightedAlternativeIndex, idx < alternativeOptionValues.count {
+            valueToCommit = alternativeOptionValues[idx]
+        } else {
+            valueToCommit = nil
+        }
+        hideAlternativeOverlay()
+        if let valueToCommit {
+            delegate?.keyboardViewDidSelectAlternative(valueToCommit)
+        }
+    }
+
+    private func setHighlightedAlternativeIndex(_ index: Int?) {
+        highlightedAlternativeIndex = index
+        for (i, button) in alternativeOptionButtons.enumerated() {
+            let selected = (i == index)
+            if selected {
+                button.backgroundColor = KeyboardDesignTokens.Palette.brandBlue
+                button.setTitleColor(.white, for: .normal)
+                button.tintColor = .white
+            } else {
+                styleFunctionKey(button, style: .quick)
+            }
+        }
+    }
+
     private func makeIconButton(systemName: String, style: FunctionKeyStyle) -> UIButton {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: systemName), for: .normal)
         styleFunctionKey(button, style: style)
         button.heightAnchor.constraint(equalToConstant: KeyboardDesignTokens.Metrics.keyHeight).isActive = true
         return button
+    }
+
+    /// 生成第三行左侧的修饰符键：点击主重音、长按候选、滑动快捷。
+    private func makeModifierKey() -> KeyboardKeyButton {
+        let model = KeyModel(
+            id: "modifier_shift_replacement",
+            primaryLabel: KeyboardLayout.modifierPrimary,
+            secondaryLabel: KeyboardLayout.modifierSecondary,
+            output: KeyboardLayout.modifierPrimary,
+            role: .special,
+            alternatives: KeyboardLayout.modifierAlternatives,
+            accessibilityLabel: "stress mark key"
+        )
+
+        let button = KeyboardKeyButton(key: model, isDark: traitCollection.userInterfaceStyle == .dark)
+        styleModifierKey(button)
+        button.onTap = { [weak self] in
+            guard let self, !self.isModifierAlternativeTracking else { return }
+            self.delegate?.keyboardViewDidTapModifier(KeyboardLayout.modifierPrimary)
+        }
+        button.onLongPressStateChanged = { [weak self] source, gesture in
+            guard let self else { return }
+            switch gesture.state {
+            case .began:
+                self.beginAlternativeTracking(from: source)
+                self.updateAlternativeTracking(location: gesture.location(in: self))
+            case .changed:
+                self.updateAlternativeTracking(location: gesture.location(in: self))
+            case .ended:
+                self.updateAlternativeTracking(location: gesture.location(in: self))
+                self.endAlternativeTracking(commit: true)
+            case .cancelled, .failed:
+                self.endAlternativeTracking(commit: false)
+            default:
+                break
+            }
+        }
+
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(handleModifierPan(_:)))
+        pan.cancelsTouchesInView = true
+        button.addGestureRecognizer(pan)
+
+        return button
+    }
+
+    @objc private func handleModifierPan(_ gr: UIPanGestureRecognizer) {
+        guard !isModifierAlternativeTracking else { return }
+        guard gr.state == .ended else { return }
+        let t = gr.translation(in: self)
+        let threshold: CGFloat = 16
+        var output: String?
+
+        if abs(t.y) > abs(t.x), t.y < -threshold {
+            output = "ˌ"
+        } else if t.x > threshold {
+            output = "ː"
+        } else if t.x < -threshold {
+            output = "."
+        }
+
+        guard let value = output else { return }
+        delegate?.keyboardViewDidTapModifier(value)
+    }
+
+    private func styleModifierKey(_ button: UIControl) {
+        let isDark = traitCollection.userInterfaceStyle == .dark
+        button.backgroundColor = isDark ? KeyboardDesignTokens.Palette.keySpecialDark : KeyboardDesignTokens.Palette.keySpecialLight
     }
 
     private func makeFunctionButton(title: String, style: FunctionKeyStyle) -> UIButton {

@@ -195,7 +195,9 @@ extension KeyboardViewController: KeyboardViewDelegate {
         performContextAction()
     }
 
-
+    func keyboardViewDidTapModifier(_ value: String) {
+        textDocumentProxy.insertText(value)
+    }
 
     func keyboardViewDidSelectAlternative(_ value: String) {
         textDocumentProxy.insertText(value)
